@@ -66,7 +66,7 @@ uint32_t ror(int shift_value, uint32_t Rm_value) {
 uint32_t shifter(uint8_t shift, int Rm) {
   uint8_t check_bit4 = 0x01;
   uint8_t check_shift_type = 0x06;
-  uint32_t Rm_value = 0x80000007; /*register[Rm];*/
+  uint32_t Rm_value = 0x80000003; /*register[Rm];*/
   int types = (int)((check_shift_type & shift) >> 1);
   int shift_value;
   uint32_t result;
