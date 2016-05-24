@@ -3,22 +3,42 @@
 #include "definitions.h"
 
 int getCond(uint32_t input) {
-        input = (input & (condMask << condMask_shift)) >> condMask_shift;
-        printf("%u\n",input);
+	input = (input & (condMask << condMask_shift)) >> condMask_shift;
+	printf("%u\n",input);
         return (int)input;
 }
 
 int getOpcode(uint32_t input) {
-	input = (input & (opcodeMask << opcodeMask_shift)) >> opcodeMask_shift;
+	input = (input & (opcodeMask << opcodeMask_shift)) >> opcodeMask_shift; 
+	if ((input & 1) == 1) { 
+		input |= oneMask;
+	}
 	printf("%u\n",input);
 	return (int)input;
 }
 
+int isMult(uint32_t input) {
+	uint32_t multMask = 0x9;
+	multMask <<= 28;
+	if ((input & multMask) == multMask) {
+		printf("%i\n",1);
+		return 1;
+	} else { 
+		printf("%i\n",1);
+		return 0; 
+	}
+}
+
 int main(void) {
-        uint32_t input = 0xE2345680;
-	uint32_t alt = 0xEEEEEEEE;
+        uint32_t input = 0x0110A0E3;
+	uint32_t inp2 = 0x022081E2;
+	uint32_t inp3 = 0x910203E0;
         getCond(input);
-	getOpcode(alt);
+	getOpcode(input);
+	getCond(inp2);
+	getOpcode(inp2);
+	getCond(inp3);
+	isMult(inp3);
         return 0;
 }
                                                  
