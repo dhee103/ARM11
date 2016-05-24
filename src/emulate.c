@@ -2,9 +2,11 @@
 #include<stdint.h>
 #include<stdlib.h>
 #include<math.h>
+#include<emulate/definition.h>
 
 uint32_t* fileLoader(char *filename);
 uint32_t strToNum(char c[]); 
+uint32_t indexTobit(int index, uint32_t);
 
 int main(int argc, char **args) {
 
@@ -18,6 +20,7 @@ int main(int argc, char **args) {
   i = fileLoader(args[1]);
   int j;  
   
+  // unnecessary , just for representation
   for (j = 0; i[j] != 0 ;j++) {
     printf("Line number %d: %d\n", j, i[j]);
   }
@@ -25,6 +28,7 @@ int main(int argc, char **args) {
 
 }
 
+// fileloader returns the whole input as an array of unsigned bits
 uint32_t* fileLoader(char *filename) {
 
   FILE *f;
@@ -50,6 +54,7 @@ uint32_t* fileLoader(char *filename) {
 
 }
 
+// turns an string of 0 and 1 into an unsigned integer
 uint32_t strToNum(char c[]) {
   
   int i;
@@ -62,5 +67,26 @@ uint32_t strToNum(char c[]) {
   }
 
   return result;
+
+}
+
+//gives us the bit at the standard index
+uint32_t indexTobit(int index, uint32_t bits) {
+
+  uint32_t mask = 1;
+
+  if (24 <= index && index <= 32) {
+    index = index - 24;
+  } else if (16 <= index && index <= 23) {
+    index = index - 8;
+  } else if (8 <= index && index <= 15) {
+    index = index + 8;
+  } else if (0 <= index && index <= 7) {
+    index = index + 24;
+  } 
+    
+  mask = mask << index;
+
+  return (mask & bits) != 0;
 
 }
