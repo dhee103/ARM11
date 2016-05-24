@@ -28,9 +28,10 @@
 
 /* masks & shifts*/
 #define condMask 0xf
-#define condMask_shift 28
-#define opcodeMask 0xf
-#define opcodeMask_shift 21
+#define condMask_shift 4
+#define opcodeMask 0x7
+#define oneMask 0x1 << 3
+#define opcodeMask_shift 13
 
 /* Enum named INSTR for instruction type */
 typedef enum {
