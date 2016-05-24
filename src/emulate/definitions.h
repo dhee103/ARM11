@@ -26,14 +26,20 @@
 #define U_BIT 23
 #define L_BIT 20
 
-/* Enum named INSTRUCTION for instruction type */
+/* masks & shifts*/
+#define condMask 0xf
+#define condMask_shift 28
+#define opcodeMask 0xf
+#define opcodeMask_shift 21
+
+/* Enum named INSTR for instruction type */
 typedef enum {
 	DATA_PROC,
 	MULTIPLY,
 	SINGLE_DT,
 	BRANCH,
-	TERMINATION
-} INSTRUCTION;
+	END
+} INSTR;
 
 /* Enum named COND for instruction condition */
 typedef enum {
@@ -46,7 +52,7 @@ typedef enum {
 	AL = 14
 } COND;
 
-/*Enum named OPCODE_T Data Processing instructions */
+/*Enum named OPCODE Data Processing instructions */
 typedef enum {
     AND = 0,
     EOR = 1,
@@ -58,14 +64,48 @@ typedef enum {
     CMP = 10,
     ORR = 12,
     MOV = 13
-} OPCODE_T;
+} OPCODE;
 
-/* Enum named SHIFT_T for shift type */
+/* Enum named SHIFT for shift type */
 typedef enum {
 	LSL = 0,
 	LSR = 1,
 	ASR = 2,
 	ROR = 3
-} SHIFT_T;
+} SHIFT;
 
+/* information held by the decoded instruction */
+typedef struct decoded_instruction {
+	INSTR instruction;
+	COND condition;
+	OPCODE opcode;
+	SHIFT shift;
+	uint32_t shiftAmount;
+	int isImm;
+	int isSet;
+	int isAcc;
+	int isPre;
+	int isUp;
+	int isLoad;
+	uint32_t rd;
+	uint32_t rn;
+	uint32_t rs;
+	uint32_t rm;
+	uint32_t offset;
+} decoded_instr;
+	
+typedef struct state {
+	decoded_instr decoded;
+	uint32_t *reg;
+	uint8_t *memory;
+	int isFetched;
+	int isDecoded;
+	int isExecuted;
+} state;
+
+typedef struct shift_output {
+	uint32_t data;
+	int carry;
+} shift_out;
+	
 #endif
