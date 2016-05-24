@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "definitions.h"
+#include "getCodes.h"
 
 int getCond(uint32_t input) {
 	input = (input & (condMask << condMask_shift)) >> condMask_shift;
-	printf("%u\n",input);
         return (int)input;
 }
 
@@ -13,7 +13,6 @@ int getOpcode(uint32_t input) {
 	if ((input & 1) == 1) { 
 		input |= oneMask;
 	}
-	printf("%u\n",input);
 	return (int)input;
 }
 
@@ -21,10 +20,8 @@ int isMult(uint32_t input) {
 	uint32_t multMask = 0x9;
 	multMask <<= 28;
 	if ((input & multMask) == multMask) {
-		printf("%i\n",1);
 		return 1;
 	} else { 
-		printf("%i\n",1);
 		return 0; 
 	}
 }
