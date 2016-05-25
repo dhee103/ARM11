@@ -9,8 +9,8 @@
 #define NUM_REGISTERS 17
 #define SP 13
 #define LR 14
-#define PC 15
-#define CPSR 16
+extern int PC = 15;
+extern int CPSR = 16;
 #define PC_AHEAD_BYTES 8
 
 /* Bit position */
