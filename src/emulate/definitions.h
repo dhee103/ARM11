@@ -2,6 +2,7 @@
 #define DEFS
 /* This file includes defintions that will be used for the emulator */
 
+
 /* Memory & Registers */
 #define BYTES_IN_WORD 4
 #define BITS_IN_WORD 32
@@ -31,6 +32,12 @@
 #define condMask_shift 28
 #define opcodeMask 0xf
 #define opcodeMask_shift 21
+#define check_bit31 0x80000000
+#define check_bit0 0x00000001
+#define check_bit4 0x01
+#define check_shift_type 0x06
+#define check_shift_value 0xF8
+#define check_Rs 0xf0
 
 /* Enum named INSTR for instruction type */
 typedef enum {
@@ -93,7 +100,7 @@ typedef struct decoded_instruction {
 	uint32_t rm;
 	uint32_t offset;
 } decoded_instr;
-	
+
 typedef struct state {
 	decoded_instr decoded;
 	uint32_t *reg;
@@ -108,6 +115,7 @@ typedef struct shift_output {
 	int carry;
 } shift_out;
 
-extern uint32_t register[16];
+extern uint32_t regs[NUM_REGISTERS];
+
 
 #endif
