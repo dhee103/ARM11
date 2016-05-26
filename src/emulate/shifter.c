@@ -2,72 +2,83 @@
 #include <stdio.h>
 #include <stdint.h>
 #include "definitions.h"
+#include "shifter.h"
 
+shift_out setDefaultShift(uint32_t Rm_value) {
+     shift_out result;
+      result.data = Rm_value;
+        result.carry = 0;
+    return result;
 
-uint32_t lsl(int shift_value, uint32_t Rm_value) {
+}
 
-  if(0 == shift_value) {
-    return Rm_value;
+shift_out lsl(int shift_value, uint32_t Rm_value) {
+    shift_out result;
+    if(0 == shift_value) {
+        result = setDefaultShift(Rm_value);
   } else {
 
     if(shift_value > 1) {
       int num_of_shift = shift_value - 1;
       Rm_value = Rm_value << num_of_shift;
     }
-    /*shift_out.carry = (int)((Rm_value & check_bit31) >> 31);*/
-    return Rm_value << 1;
+    result.carry = (int)((Rm_value & check_bit31) >> 31);
+    result.data = Rm_value << 1;
   }
+  return result;
 }
 
-uint32_t lsr(int shift_value, uint32_t Rm_value) {
+shift_out lsr(int shift_value, uint32_t Rm_value) {
+    shift_out result;
   if(0 == shift_value) {
-    return Rm_value;
+     result = setDefaultShift(Rm_value);
   } else {
     if(shift_value > 1) {
       int num_of_shift = shift_value - 1;
       Rm_value = Rm_value >> num_of_shift;
     }
-    /*shift_uot.carry = (int)(Rm_value & check_bit0);*/
-    return Rm_value >> 1;
-  }
-
+    result.carry = (int)(Rm_value & check_bit0);
+    result.data = Rm_value >> 1;
+    }
+return result;
 }
 
-uint32_t asr(int shift_value, uint32_t Rm_value) {
+shift_out asr(int shift_value, uint32_t Rm_value) {
+    shift_out result;
+    uint32_t bit31 = check_bit31 & Rm_value;
+    uint32_t bit31_extended = bit31;
+    int counter = 0;
+    while(counter < shift_value) {
+        bit31 = bit31 >> 1 ;
+        bit31_extended = bit31_extended | bit31;
+        counter++;
+    }
 
-  uint32_t bit31 = check_bit31 & Rm_value;
-  uint32_t bit31_extended = bit31;
-  uint32_t result;
-  int counter = 0;
-  while(counter < shift_value) {
-    bit31 = bit31 >> 1 ;
-    bit31_extended = bit31_extended | bit31;
-    counter++;
-  }
-
-  result = lsr(shift_value, Rm_value);
-  result = result | bit31_extended;
-  return result;
+    result = lsr(shift_value, Rm_value);
+    result.data = result.data | bit31_extended;
+    return result;
 }
 
-uint32_t ror(int shift_value, uint32_t Rm_value) {
-  uint32_t temp;
-  uint32_t result = Rm_value;
-  while(shift_value > 0) {
-  temp = check_bit0 & result;
-  temp = temp << 31;
-  result = result >> 1;
-  result = temp | result;
-  shift_value--;
-  }
-  return result;
+shift_out ror(int shift_value, uint32_t Rm_value) {
+    shift_out result;
+    uint32_t temp;
+    result.data = Rm_value;
+    while(shift_value > 0) {
+        temp = check_bit0 & result.data;
+        temp = temp << 31;
+        result.data = result.data >> 1;
+        result.data = temp | result.data;
+        shift_value--;
+    }
+    result.carry = (int)((result.data & check_bit31) >> 31);
+    return result;
 }
 
-uint32_t shifter(uint8_t shift, int Rm) {
-  uint32_t Rm_value = /*0x80000003;*/regs[Rm];
+shift_out shifter(uint8_t shift, int Rm) {
+  uint32_t Rm_value = regs[Rm];
   int types = (int)((check_shift_type & shift) >> 1);
   int shift_value;
-  uint32_t result;
+  shift_out result;
   if(0 == (shift & check_bit4)) {
     /*read the shift value from bit 7 to 11*/
     shift_value = (int)((shift & check_shift_value) >> 3);
@@ -112,12 +123,21 @@ void printBits(uint32_t x) {
 
 
 int main(void) {
-regs[0] = 0x80000003;
-regs[1] = 0x00000001;
-printBits(shifter(0x17, 0));
+    shift_out out;
+    regs[0] = 0x80000002;
+    regs[1] = 0x00000001;
+    out = shifter(0x17, 0);
+    printBits(out.data);
+    printf("%d", out.carry);
     return 0;
 }
 
+/*uint32_t immValue(int rotate_value, uint8_t immV) {
+    uint32_t result;
+    uint32_t extended_immV = (uint32_t) immV;
+    result = ror(rotate_value, extended_immV);
+    return result;
+}*/
 
 
 
