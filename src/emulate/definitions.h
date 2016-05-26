@@ -29,15 +29,26 @@
 
 /* masks & shifts*/
 #define condMask 0xf
-#define condMask_shift 28
-#define opcodeMask 0xf
-#define opcodeMask_shift 21
+#define condMask_shift 4
+#define opcodeMask 0x7
+#define oneMask 0x1 << 3
+#define opcodeMask_shift 13
+#define multMask 0x9 << 28
+#define NFlagMask 0x1
+#define NFlagShift 7
+#define ZFlagMask 0x1
+#define ZFlagShift 6
 #define check_bit31 0x80000000
 #define check_bit0 0x00000001
 #define check_bit4 0x01
 #define check_shift_type 0x06
 #define check_shift_value 0xF8
 #define check_Rs 0xf0
+#define check_bit0_7 0x000000FF
+#define check_bit8_11 0x00000F00
+#define check_bit0_3 0x0000000F
+#define check_bit4_11 0x00000FF0
+
 
 /* Enum named INSTR for instruction type */
 typedef enum {
@@ -83,11 +94,11 @@ typedef enum {
 
 /* information held by the decoded instruction */
 typedef struct decoded_instruction {
-	INSTR instruction;
+	/*INSTR instruction;*/
 	COND condition;
 	OPCODE opcode;
-	SHIFT shift;
-	uint32_t shiftAmount;
+	/*SHIFT shift;
+	uint32_t shiftAmount;*/
 	int isImm;
 	int isSet;
 	int isAcc;
@@ -96,18 +107,30 @@ typedef struct decoded_instruction {
 	int isLoad;
 	uint32_t rd;
 	uint32_t rn;
-	uint32_t rs;
+	/*uint32_t rs;
 	uint32_t rm;
-	uint32_t offset;
+	uint32_t offset;*/
+	uint32_t operand2;
+
 } decoded_instr;
 
+typedef struct cprsFlag {
+    uint8_t n;
+    uint8_t z;
+    uint8_t c;
+    uint8_t v;
+}cprsFlag;
+
 typedef struct state {
-	decoded_instr decoded;
-	uint32_t *reg;
-	uint8_t *memory;
+	decoded_instr *decoded;
+    cprsFlag cprs;
+	/*uint32_t *reg;
+    uint8_t *memory;*/
+    uint32_t pc;
+    /*uint32_t instr;
 	int isFetched;
 	int isDecoded;
-	int isExecuted;
+	int isExecuted;*/
 } state;
 
 typedef struct shift_output {
