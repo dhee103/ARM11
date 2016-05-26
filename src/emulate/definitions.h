@@ -6,12 +6,10 @@
 #define BYTES_IN_WORD 4
 #define BITS_IN_WORD 32
 #define MEMORY_SIZE 65536
-#define NUM_REGISTERS 17
-#define SP 13
-#define LR 14
-#define PC 15
-#define CPSR 16
+#define PC 13
+#define CPSR 14
 #define PC_AHEAD_BYTES 8
+#define PC_OFFSET 4
 
 /* Bit position */
 #define MS_BIT 31
@@ -99,19 +97,33 @@ typedef struct decoded_instruction {
 	uint32_t rm;
 	uint32_t offset;
 } decoded_instr;
-	
+
+//state of processor
 typedef struct state {
 	decoded_instr *decoded;
 	uint32_t *reg;
-	uint8_t *memory;
+//	TODO: check if 8 or 32 bit memory
+    uint8_t *memory;
+    uint32_t pc;
+    struct cprsFlag cprs;
 	int isFetched;
 	int isDecoded;
 	int isExecuted;
 } state;
 
+typedef struct cprsFlag {
+    uint8_t n;
+    uint8_t z;
+    uint8_t c;
+    uint8_t v;
+}cprs;
+
 typedef struct shift_output {
 	uint32_t data;
 	int carry;
 } shift_out;
-	
+
+extern uint32_t reg[15];
+
+
 #endif
