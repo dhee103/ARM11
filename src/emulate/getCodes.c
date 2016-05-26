@@ -3,39 +3,54 @@
 #include "definitions.h"
 #include "getCodes.h"
 
-int getCond(uint32_t input) {
-	input = (input & (condMask << condMask_shift)) >> condMask_shift;
-        return (int)input;
+int getCond(uint32_t instruction) {
+	instruction = (instruction & (condMask << condMask_shift)) >> condMask_shift;
+        return (int)instruction;
 }
 
-int getOpcode(uint32_t input) {
-	input = (input & (opcodeMask << opcodeMask_shift)) >> opcodeMask_shift; 
-	if ((input & 1) == 1) { 
-		input |= oneMask;
+int getOpcode(uint32_t instruction) {
+	instruction = (instruction & (opcodeMask << opcodeMask_shift)) >> opcodeMask_shift;
+	if ((instruction & 1) == 1) {
+		instruction |= oneMask;
 	}
-	return (int)input;
+	return (int)instruction;
 }
 
-int isMult(uint32_t input) {
-	uint32_t multMask = 0x9;
-	multMask <<= 28;
-	if ((input & multMask) == multMask) {
-		return 1;
-	} else { 
-		return 0; 
-	}
+int isMult(uint32_t instruction) {
+//	uint32_t multMask = 0x9;
+//	multMask <<= 28;
+	return ((instruction & multMask) == multMask);
+}
+
+int getNFlag(uint32_t instruction) {
+    instruction = (instruction & (NFlagMask << NFlagShift)) >> NFlagShift;
+    printf("%u\n",instruction);
+    return instruction;
+}
+
+int getZFlag(uint32_t instruction) {
+    instruction = (instruction & (ZFlagMask << ZFlagShift)) >> ZFlagShift;
+    printf("%u\n",instruction);
+    return instruction;
+}
+
+void setNFlag(uint32_t instruction, int bit) {
+
+    printf("%u\n",instruction);
 }
 
 int main(void) {
-        uint32_t input = 0x0110A0E3;
+	uint32_t instruction = 0x0110A0E3;
 	uint32_t inp2 = 0x022081E2;
 	uint32_t inp3 = 0x910203E0;
-        getCond(input);
-	getOpcode(input);
+    getCond(instruction);
+	getOpcode(instruction);
 	getCond(inp2);
 	getOpcode(inp2);
 	getCond(inp3);
 	isMult(inp3);
-        return 0;
+    getNFlag(inp3);
+    getZFlag(inp3);
+    return 0;
 }
                                                  
