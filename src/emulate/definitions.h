@@ -1,6 +1,6 @@
 #ifndef DEFS
 #define DEFS
-/* This file includes defintions that will be used for the emulator */
+/* This file includes definitions that will be used for the emulator */
 
 /* Memory & Registers */
 #define BYTES_IN_WORD 4
@@ -32,6 +32,11 @@
 #define opcodeMask 0x7
 #define oneMask 0x1 << 3
 #define opcodeMask_shift 13
+#define multMask 0x9 << 28
+#define NFlagMask 0x1
+#define NFlagShift 7
+#define ZFlagMask 0x1
+#define ZFlagShift 6
 
 /* Enum named INSTR for instruction type */
 typedef enum {
@@ -96,7 +101,7 @@ typedef struct decoded_instruction {
 } decoded_instr;
 	
 typedef struct state {
-	decoded_instr decoded;
+	decoded_instr *decoded;
 	uint32_t *reg;
 	uint8_t *memory;
 	int isFetched;
