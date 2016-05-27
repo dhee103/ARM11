@@ -7,7 +7,7 @@
 #include "setRegs.h"
 #include <stdlib.h>
 
-/*for tasting*/
+/*for testing*/
 void printBits(uint32_t x) {
   int i;
   uint32_t mask = 1 << 31;
@@ -66,7 +66,7 @@ void processing(state *str) {
     int carry_out = 0;
     str_decoded = str -> decoded;
     int pass_check = checkCPRS(str_decoded -> condition, str -> cprs);
-    /*for tasting*/
+    /*for testing*/
     printf("check : %d\n", pass_check);
 
     if(1 == pass_check) {
@@ -74,7 +74,7 @@ void processing(state *str) {
                 uint32_t imm = (str_decoded -> operand2) & check_bit0_7;
                 int rotV = (int)(((str_decoded -> operand2) & check_bit8_11) >> 8);
                 second_operand = immValue(rotV,imm);
-                /*for tasting*/
+                /*for testing*/
                 printBits(second_operand);
             } else {
                 uint32_t rm = (int)(str_decoded -> operand2) & check_bit0_3;
@@ -82,7 +82,7 @@ void processing(state *str) {
                 shift_out op2 = shifter(shift,rm);
                 second_operand = op2.data;
                 carry_out = op2.carry;
-                /*for tasting*/
+                /*for testing*/
                 printBits(second_operand);
             }
 
@@ -153,12 +153,12 @@ void processing(state *str) {
 
             }
             setNZ(result,str);
-                    /*for tasting*/
+                    /*for testing*/
                     printf("C_out %d\n",(str->cprs)->c );
                     printf("Z_out %d\n",(str->cprs)->z );
 
     }
-    /*for tasting*/
+    /*for testing*/
     printf("carry_out %d\n", carry_out);
 
 
@@ -169,7 +169,7 @@ void processing(state *str) {
 }
 
 
-/*for tasting*/
+/*for testing*/
 int main(void) {
 
     decoded_instr *deTest = malloc(sizeof(decoded_instr));
