@@ -9,8 +9,6 @@
 #define NUM_REGISTERS 17
 #define SP 13
 #define LR 14
-extern int PC = 15;
-extern int CPSR = 16;
 #define PC_AHEAD_BYTES 8
 
 /* Bit position */
@@ -76,7 +74,6 @@ typedef enum {
 
 /* information held by the decoded instruction */
 typedef struct decoded_instruction {
-	INSTR instruction;
 	COND condition;
 	OPCODE opcode;
 	SHIFT shift;
@@ -92,16 +89,30 @@ typedef struct decoded_instruction {
 	uint32_t rs;
 	uint32_t rm;
 	uint32_t offset;
+        uint32_t operand2;
 } decoded_instr;
+
+typedef struct CPSR {
+
+  uint32_t N;
+  uint32_t Z;
+  uint32_t V;
+  uint32_t C;
+
+}CPSR;
 	
-typedef struct state {
-	decoded_instr decoded;
+typedef struct STATE {
+	decoded_instr *decoded;
 	uint32_t *reg;
 	uint8_t *memory;
 	int isFetched;
 	int isDecoded;
 	int isExecuted;
-} state;
+        CPSR *cpsr;
+        uint32_t PC;
+} STATE;
+
+
 
 typedef struct shift_output {
 	uint32_t data;
