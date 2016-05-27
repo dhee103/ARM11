@@ -24,6 +24,9 @@ void print_result(STATE *state);
 void  free_state(STATE *state);
 uint32_t get_CPSR(STATE *state);
 int checkcond(STATE *state, uint32_t cond);
+uint32_t shifter_register(STATE *state, uint32_t offset);
+uint32_t getFromMem(STATE *state, uint32_t address);
+void addToMem(STATE *state, uint32_t address, uint32_t value);
 
 int run(int argc, char **args) {
 
@@ -37,8 +40,8 @@ int run(int argc, char **args) {
   STATE *state =  malloc(sizeof(STATE));
   decoded_instr *decoded = malloc(sizeof(STATE));
   CPSR *cpsr = malloc(sizeof(CPSR));
-  uint32_t reg[12] = {0};
-  uint8_t memory[2] = {0};
+  uint32_t reg[16] = {0};
+  uint8_t memory[32768] = {0};
   state -> cpsr = cpsr; 
   state -> decoded = decoded;
   state -> memory = memory;
@@ -236,7 +239,47 @@ void  multiply(STATE *state) {
 
 void  single_data_transfer(STATE *state) {
 
+  uint32_t offset = state -> decoded -> offset;
+  uint32_t rb = state -> decoded -> rn;
+  uint32_t rd = state -> decoded -> rd;
 
+  if (state -> decoded -> isImm) {
+    offset = shifter_register(state, offset);
+  }
+
+  uint32_t memory_address;
+  uint32_t base_offset;
+
+  if (state -> decoded -> isUp) {
+
+    base_offset = rb + offset;
+
+  } else {
+
+    base_offset = rb - offset;
+
+  }
+
+  if (state -> decoded -> isPre) {
+
+    memory_address = base_offset;
+
+  } else {
+
+    memory_address = rb; 
+    state -> decoded -> rn = rb;
+
+  }
+
+  if (state -> decoded -> isLoad) {
+
+    addToMem(state, memory_address, (state -> reg) [rd]);
+
+  } else {
+
+    (state -> reg) [rd] = getFromMem(state, memory_address);
+
+  }
 
 }
 
@@ -290,5 +333,60 @@ void  free_state(STATE *state) {
   assert(state != NULL);
 
   free(state);
+
+}
+
+void addToMem(STATE *state, uint32_t address, uint32_t value) {
+
+  int i;
+
+  for (i = 0; i < 4; i++) {
+    (state -> memory) [address + i] = bitsToNum(value, 0 + i * 8, 7 + i * 8);
+  }  
+
+}
+
+uint32_t getFromMem(STATE *state, uint32_t address) {
+
+  uint32_t result = 0;
+  int i;
+
+  for (i = 0; i < 4; i++) {
+    result = result | (((uint32_t) (state -> memory) [address + i]) << (i * 8));
+  }
+
+  return result;
+
+}
+
+uint32_t shifter_register(STATE *state, uint32_t offset) {
+
+  uint32_t rm = (state -> reg)[offset & 31];
+  uint32_t type = (offset & 96) >> 5;
+  uint32_t shifter = offset >> 7; 
+
+  uint32_t result;
+
+  switch (type) {
+
+    case LSL: result = shifter >> rm; break;
+    case LSR: result = shifter << rm;break;
+    case ROR: result = shifter >> rm; 
+              shifter = shifter >> (32 - rm);
+              shifter = shifter << (32 - rm);
+              result = result | shifter;
+              break;
+    case ASR: if (shifter >> 31 == 1) {
+                result = (pow(2, rm) - 1);
+                result = result << (32 - rm);
+                result = result | (shifter >> rm);
+              } else {
+                result = shifter << rm;        
+              } 
+              break;
+
+  }
+
+  return result;
 
 }
