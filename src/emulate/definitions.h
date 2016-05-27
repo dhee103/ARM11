@@ -123,7 +123,7 @@ typedef struct cprsFlag {
 
 typedef struct state {
 	decoded_instr *decoded;
-    cprsFlag cprs;
+    cprsFlag *cprs;
 	/*uint32_t *reg;
     uint8_t *memory;*/
     uint32_t pc;

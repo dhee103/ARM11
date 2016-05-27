@@ -23,38 +23,38 @@ void printBits(uint32_t x) {
   }
 
 void setNZ(uint32_t check_value, state *toBeSet) {
-        (toBeSet -> cprs).n = 0x01;
-        (toBeSet -> cprs).z = 0x00;
+        (toBeSet -> cprs)->n = 0x01;
+        (toBeSet -> cprs)->z = 0x00;
 
         if(0 == (check_value & check_bit31)) {
-            (toBeSet -> cprs).n = 0x00;
+            (toBeSet -> cprs)->n = 0x00;
         }
 
         if(0 == check_value ) {
-            (toBeSet -> cprs).z = 0x01;
+            (toBeSet -> cprs)->z = 0x01;
         }
 
 }
 
 void setC(state *toBeSet,int carry_out) {
-        (toBeSet -> cprs).c = (uint8_t)carry_out;
+        (toBeSet -> cprs)->c = (uint8_t)carry_out;
 }
 
 void setCadd(state *toBeSet,uint32_t first_value,uint32_t second_value) {
-    (toBeSet -> cprs).c = 0x00;
+    (toBeSet -> cprs)->c = 0x00;
     int first_bit31 = (int)((first_value & check_bit31)>>31);
     int second_bit31 = (int)((second_value & check_bit31)>>31);
     if((1 == first_bit31) && (1 == second_bit31)) {
-        (toBeSet -> cprs).c = 0x01;
+        (toBeSet -> cprs)->c = 0x01;
     }
 }
 
 void setCsub(state *toBeSet,uint32_t first_value,uint32_t second_value) {
-     (toBeSet -> cprs).c = 0x00;
+     (toBeSet -> cprs)->c = 0x00;
     int first_bit31 = (int)((first_value & check_bit31)>>31);
     int second_bit31 = (int)((second_value & check_bit31)>>31);
     if((0 == first_bit31) && (1 == second_bit31)) {
-        (toBeSet -> cprs).c = 0x01;
+        (toBeSet -> cprs)->c = 0x01;
     }
 }
 
@@ -72,6 +72,7 @@ void processing(state *str) {
                 uint32_t imm = (str_decoded -> operand2) & check_bit0_7;
                 int rotV = (int)(((str_decoded -> operand2) & check_bit8_11) >> 8);
                 second_operand = immValue(rotV,imm);
+                printBits(second_operand);
             } else {
                 uint32_t rm = (int)(str_decoded -> operand2) & check_bit0_3;
                 uint8_t shift = (uint8_t)(((str_decoded -> operand2) & check_bit4_11) >> 4);
@@ -119,7 +120,8 @@ void processing(state *str) {
                 case MOV :
                     /*PC = operand2*/
                     result = second_operand;
-                    str -> pc = result;
+                    printBits(result);
+                    regs[str_decoded -> rd] = result;
                     break;
             }
 
@@ -147,8 +149,8 @@ void processing(state *str) {
 
             }
             setNZ(result,str);
-                    printf("C_out %d\n",(str->cprs).c );
-                    printf("Z_out %d\n",(str->cprs).z );
+                    printf("C_out %d\n",(str->cprs)->c );
+                    printf("Z_out %d\n",(str->cprs)->z );
 
     }
     printf("carry_out %d\n", carry_out);
@@ -166,31 +168,38 @@ int main(void) {
 
     decoded_instr *deTest = malloc(sizeof(decoded_instr));
     /*deTest = {AL, AND, 1, 1, 0, 0, 0, 0, 0x00000002, 0x00000001, 0x00000170};*/
-    cprsFlag testCprs;
+    cprsFlag *testCprs = malloc(sizeof(cprsFlag));
     /*testCprs = {0,1,0,0};*/
     state *test = malloc(sizeof(state));
     /*test = {&deTest, testCprs, 0x00000000};*/
-    testCprs.n = 0;
-    testCprs.z = 1;
-    testCprs.c = 0;
-    testCprs.v = 0;
-    deTest->condition = EQ;
-    deTest->opcode = AND;
+    testCprs->n = 0;
+    testCprs->z = 1;
+    testCprs->c = 0;
+    testCprs->v = 0;
+    deTest->condition = AL;
+    deTest->opcode = SUB;
     deTest->isImm = 0;
     deTest->isSet = 0;
     deTest->rn = 0x00000001;
     deTest->rd = 0x00000002;
-    deTest->operand2 = 0x00000370;
+    deTest->operand2 = 0x00000001;
     test->cprs = testCprs;
 
 
-    regs[1] = 0x02050002;
-    regs[0] = 0x0000000F;
-    regs[3] = 0x00000001;
+    regs[1] = 0x000000FF;
+    /*regs[2] = 0x00000002;
+    regs[3] = 0x00000003;*/
     test->decoded = deTest;
     processing(test);
-    printf("C %d\n",(test->cprs).c );
-    printBits(regs[(test->decoded)->rn]);
-    printBits(regs[(test->decoded)->rd]);
+    printf("C %d\n",(test->cprs)->c );
+    /*printBits(regs[(test->decoded)->rn]);
+    printBits(regs[(test->decoded)->rd]);*/
+    printBits(regs[1]);
+    printBits(regs[2]);
+    /*printBits(regs[3]);
+    printBits(regs[4]);*/
+
+
+
 
 }
