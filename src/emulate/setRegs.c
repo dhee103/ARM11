@@ -55,20 +55,6 @@ int checkCPRS (COND condition,cprsFlag check) {
 
     }
 
-    void setCPRS(uint32_t check_value, cprsFlag toBeSet,int carry_out) {
-        if(0 == (check_value & check_bit31)) {
-            toBeSet.n = 0x00;
-        }
-
-        if(0 == check_value ) {
-            toBeSet.z = 0x00;
-        }
-
-        toBeSet.n = 0x01;
-        toBeSet.z = 0x01;
-        toBeSet.c = (uint8_t) carry_out;
-        return;
-    }
 
 
 
