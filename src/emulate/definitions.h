@@ -1,8 +1,9 @@
-#ifndef DEFS
-#define DEFS
+#ifndef __DEFS_H
+#define __DEFS_H
 /* This file includes definitions that will be used for the emulator */
 
 /* Memory & Registers */
+#include <stdint.h>
 #include <stdlib.h>
 #include <memory.h>
 
@@ -111,17 +112,13 @@ typedef struct cpsrFlag {
 	int cbit;
 	int vbit;
 }cpsr;
-	
+
 typedef struct state {
 	decoded_instr *decoded;
-//    uint32_t *instr;
 	uint32_t *reg;
 	uint8_t *memory;
     uint32_t pc;
     cpsr *cpsrFlag;
-	int isFetched;
-	int isDecoded;
-	int isExecuted;
 } state;
 
 extern uint32_t regs[NUM_REGISTERS];
@@ -131,34 +128,6 @@ typedef struct shift_output {
 	int carry;
 } shift_out;
 
-state *newState(void) {
-    state *st = malloc(sizeof(state));
-    st->decoded = malloc(sizeof(struct decoded_instruction));
-    st->memory = malloc(MEM_SIZE*sizeof(uint8_t));
-    memset(st->memory,0,sizeof(uint8_t));
-    st->reg = malloc(NUM_REGISTERS*sizeof(uint32_t));
-    memset(st->reg,0,sizeof(uint32_t));
-    st->isDecoded = 0;
-    st->isFetched = 0;
-    return st;
-}
 
-void freeState(state *st) {
-    if (st != NULL) {
-        if (st->decoded != NULL) {
-            free(st->decoded);
-        }
 
-        if (st->reg != NULL) {
-            free(st->reg);
-        }
-
-        if (st->memory != NULL) {
-            free(st->memory);
-        }
-
-        free(st);
-    }
-}
-	
 #endif

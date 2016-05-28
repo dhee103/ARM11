@@ -1,35 +1,10 @@
-#include <stdio.h>
-#include <stdint.h>
-#include "definitions.h"
 #include "getCodes.h"
-#include "instructions.c"
-#include "instructionCycle.c"
+#include "instructions.h"
+#include "instructionCycle.h"
 
 int getCond(uint32_t instruction) {
 	instruction = (instruction & (condMask << condMask_shift)) >> condMask_shift;
 	return (int)instruction;
-}
-
-int checkCond(state *st) {
-    uint32_t instruction = getInstruction(st);
-    switch(getCond(instruction)) {
-        case EQ :
-            return st->cpsrFlag->zbit;
-        case NE :
-            return !st->cpsrFlag->zbit;
-        case GE :
-            return st->cpsrFlag->nbit == st->cpsrFlag->vbit;
-        case LT :
-            return st->cpsrFlag->nbit != st->cpsrFlag->vbit;
-        case GT :
-            return !st->cpsrFlag->zbit & (st->cpsrFlag->nbit == st->cpsrFlag->vbit);
-        case LE :
-            return st->cpsrFlag->zbit | (st->cpsrFlag->nbit != st->cpsrFlag->vbit);
-        case AL :
-            return EXIT_SUCCESS;
-        default:
-            return EXIT_FAILURE;
-    }
 }
 
 int getOpcode(uint32_t instruction) {
@@ -90,17 +65,39 @@ void selectInstruction(state *st) {
         decode_process_data(st);
         dataProcessing(st);
     }
-    else if(bitAccess(isSDT_bit,instr)) {
+    else if (bitAccess(isSDT_bit, instr)) {
         decode_single_data_transfer(st);
         singleDataTransfer(st);
     }
-    else if(!bitAccess(isMult_bit,instr) && isMult(instr)) {
+    else if (!bitAccess(isMult_bit, instr) && isMult(instr)) {
         decode_multiply(st);
         multiply(st);
     }
     else {
         decode_branch(st);
         branch(st);
+    }
+}
+
+int checkCond(state *st) {
+    uint32_t instruction = getInstruction(st);
+    switch (getCond(instruction)) {
+        case EQ :
+            return st->cpsrFlag->zbit;
+        case NE :
+            return !st->cpsrFlag->zbit;
+        case GE :
+            return st->cpsrFlag->nbit == st->cpsrFlag->vbit;
+        case LT :
+            return st->cpsrFlag->nbit != st->cpsrFlag->vbit;
+        case GT :
+            return !st->cpsrFlag->zbit & (st->cpsrFlag->nbit == st->cpsrFlag->vbit);
+        case LE :
+            return st->cpsrFlag->zbit | (st->cpsrFlag->nbit != st->cpsrFlag->vbit);
+        case AL :
+            return EXIT_SUCCESS;
+        default:
+            return EXIT_FAILURE;
     }
 }
 
