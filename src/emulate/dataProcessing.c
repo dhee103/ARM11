@@ -79,7 +79,7 @@ void processing(state *str) {
             } else {
                 uint32_t rm = (int)(str_decoded -> operand2) & check_bit0_3;
                 uint8_t shift = (uint8_t)(((str_decoded -> operand2) & check_bit4_11) >> 4);
-                shift_out op2 = shifter(shift,rm);
+                shift_out op2 = shifter(shift,rm,str);
                 second_operand = op2.data;
                 carry_out = op2.carry;
                 /*for testing*/
@@ -89,43 +89,43 @@ void processing(state *str) {
 
             switch(str_decoded -> opcode) {
                 case AND :
-                    result = regs[str_decoded -> rn] & second_operand;
-                    regs[str_decoded -> rd] = result;
+                    result = str->reg[str_decoded -> rn] & second_operand;
+                    str->reg[str_decoded -> rd] = result;
                     break;
                 case EOR :
-                    result = regs[str_decoded -> rn] ^ second_operand;
-                    regs[str_decoded -> rd] = result;
+                    result = str->reg[str_decoded -> rn] ^ second_operand;
+                    str->reg[str_decoded -> rd] = result;
                     break;
                 case SUB :
-                    result = regs[str_decoded -> rn] - second_operand;
-                    regs[str_decoded -> rd] = result;
+                    result = str->reg[str_decoded -> rn] - second_operand;
+                    str->reg[str_decoded -> rd] = result;
                     break;
                 case RSB :
-                    result = second_operand - regs[str_decoded -> rn];
-                    regs[str_decoded -> rd] = result;
+                    result = second_operand - str->reg[str_decoded -> rn];
+                    str->reg[str_decoded -> rd] = result;
                     break;
                 case ADD :
-                    result = regs[str_decoded -> rn] + second_operand;
-                    regs[str_decoded -> rd] = result;
+                    result = str->reg[str_decoded -> rn] + second_operand;
+                    str->reg[str_decoded -> rd] = result;
                     break;
                 case TST :
-                    result = regs[str_decoded -> rn] & second_operand;
+                    result = str->reg[str_decoded -> rn] & second_operand;
                     break;
                 case TEQ :
-                    result = regs[str_decoded -> rn] ^ second_operand;
+                    result = str->reg[str_decoded -> rn] ^ second_operand;
                     break;
                 case CMP :
-                    result = regs[str_decoded -> rn] - second_operand;
+                    result = str->reg[str_decoded -> rn] - second_operand;
                     break;
                 case ORR :
-                    result = regs[str_decoded -> rn] | second_operand;
-                    regs[str_decoded -> rd] = result;
+                    result = str->reg[str_decoded -> rn] | second_operand;
+                    str->reg[str_decoded -> rd] = result;
                     break;
                 case MOV :
                     /*PC = operand2*/
                     result = second_operand;
                     printBits(result);
-                    regs[str_decoded -> rd] = result;
+                    str->reg[str_decoded -> rd] = result;
                     break;
             }
 
@@ -142,13 +142,13 @@ void processing(state *str) {
 
                 case SUB :
                 case CMP :
-                    setCsub(str,regs[str_decoded -> rn],second_operand);
+                    setCsub(str,str->reg[str_decoded -> rn],second_operand);
                     break;
                 case RSB :
-                    setCsub(str,second_operand,regs[str_decoded -> rn]);
+                    setCsub(str,second_operand,str->reg[str_decoded -> rn]);
                     break;
                 case ADD :
-                    setCadd(str,regs[str_decoded -> rn],second_operand);
+                    setCadd(str,str->reg[str_decoded -> rn],second_operand);
                     break;
 
             }
@@ -192,7 +192,7 @@ int main(void) {
     test->cprs = testCprs;
 
 
-    regs[1] = 0x000000FF;
+    test->reg[1] = 0x000000FF;
     /*regs[2] = 0x00000002;
     regs[3] = 0x00000003;*/
     test->decoded = deTest;
@@ -200,8 +200,8 @@ int main(void) {
     printf("C %d\n",(test->cprs)->c );
     /*printBits(regs[(test->decoded)->rn]);
     printBits(regs[(test->decoded)->rd]);*/
-    printBits(regs[1]);
-    printBits(regs[2]);
+    printBits(test->reg[1]);
+    printBits(test->reg[2]);
     /*printBits(regs[3]);
     printBits(regs[4]);*/
 

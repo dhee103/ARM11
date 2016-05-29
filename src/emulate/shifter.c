@@ -74,8 +74,8 @@ shift_out ror(int shift_value, uint32_t Rm_value) {
     return result;
 }
 
-shift_out shifter(uint8_t shift, int Rm) {
-  uint32_t Rm_value = regs[Rm];
+shift_out shifter(uint8_t shift, int Rm, state *str) {
+  uint32_t Rm_value = str->reg[Rm];
   int types = (int)((check_shift_type & shift) >> 1);
   int shift_value;
   shift_out result;
@@ -86,7 +86,7 @@ shift_out shifter(uint8_t shift, int Rm) {
   else {
     /*read the value from the Rs register*/
     int Rs = (int)((shift & check_Rs) >> 4);
-    shift_value = regs[Rs];
+    shift_value = str->reg[Rs];
   }
 
   switch(types) {

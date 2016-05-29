@@ -1,5 +1,4 @@
 #include <stdint.h>
-
-void setRegs(void);
+state *newState(void);
 int checkCPRS (COND condition,cprsFlag *check);
 

@@ -124,8 +124,8 @@ typedef struct cprsFlag {
 typedef struct state {
 	decoded_instr *decoded;
     cprsFlag *cprs;
-	/*uint32_t *reg;
-    uint8_t *memory;*/
+	uint32_t *reg;
+    /*uint8_t *memory;*/
     uint32_t pc;
     /*uint32_t instr;
 	int isFetched;
@@ -138,7 +138,6 @@ typedef struct shift_output {
 	int carry;
 } shift_out;
 
-extern uint32_t regs[NUM_REGISTERS];
 
 
 #endif
