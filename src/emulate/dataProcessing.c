@@ -205,7 +205,4 @@ int main(void) {
     /*printBits(regs[3]);
     printBits(regs[4]);*/
 
-
-
-
 }
