@@ -1,3 +1,4 @@
+
 #include "shifter.h"
 
 shift_out setDefaultShift(uint32_t Rm_value) {
@@ -18,7 +19,7 @@ shift_out lsl(int shift_value, uint32_t Rm_value) {
             int num_of_shift = shift_value - 1;
             Rm_value = Rm_value << num_of_shift;
         }
-        result.carry = (int)((Rm_value & check_bit31) >> FULLSHIFT);
+        result.carry = (int)((Rm_value & check_bit31) >> 31);
         result.data = Rm_value << 1;
     }
     return result;
@@ -70,8 +71,8 @@ shift_out ror(int shift_value, uint32_t Rm_value) {
     return result;
 }
 
-shift_out shifter(uint8_t shift, int Rm) {
-    uint32_t Rm_value = regs[Rm];
+shift_out shifter(uint8_t shift, int Rm, state *st) {
+    uint32_t Rm_value = st->reg[Rm];
     int types = (int)((check_shift_type & shift) >> 1);
     int shift_value;
     shift_out result;
@@ -82,7 +83,7 @@ shift_out shifter(uint8_t shift, int Rm) {
     else {
         /*read the value from the Rs register*/
         int Rs = (int)((shift & check_Rs) >> 4);
-        shift_value = regs[Rs];
+        shift_value = st->reg[Rs];
     }
 
     switch(types) {
@@ -108,7 +109,6 @@ uint32_t immValue(int rotate_value, uint32_t immV) {
     result = ror(num_rotate, immV).data;
     return result;
 }
-
 
 
 

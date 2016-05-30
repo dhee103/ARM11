@@ -8,7 +8,6 @@
 #include <memory.h>
 
 #define BYTES_IN_WORD 4
-#define BITS_IN_WORD 32
 #define MEM_SIZE 65536
 #define NUM_REGISTERS 17
 #define PC 13
@@ -51,7 +50,6 @@
 #define check_bit0_3 0x0000000F
 #define check_bit4_11 0x00000FF0
 #define FULLSHIFT 31
-
 
 /* Enum named COND for instruction condition */
 typedef enum {
@@ -111,23 +109,18 @@ typedef struct cpsrFlag {
 	int zbit;
 	int cbit;
 	int vbit;
-}cpsr;
+} cpsr;
 
 typedef struct state {
 	decoded_instr *decoded;
 	uint32_t *reg;
 	uint8_t *memory;
-    uint32_t pc;
     cpsr *cpsrFlag;
 } state;
-
-extern uint32_t regs[NUM_REGISTERS];
 
 typedef struct shift_output {
 	uint32_t data;
 	int carry;
 } shift_out;
-
-
 
 #endif

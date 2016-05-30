@@ -1,15 +1,5 @@
 #include "setRegs.h"
 
-uint32_t regs[NUM_REGISTERS];
-
-void setRegs(void) {
-    int i = 0;
-    while(i < NUM_REGISTERS) {
-        regs[i] = 0x00000000;
-    }
-    return;
-}
-
 int checkCPRS (COND condition,cpsr *check) {
     int check_result = 0;
     switch(condition) {
