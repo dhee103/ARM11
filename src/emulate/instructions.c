@@ -1,10 +1,8 @@
 #include "instructions.h"
-#include "getCodes.h"
-#include "shifter.h"
 #include "utilities.h"
+#include "shifter.h"
 
 #include <stdio.h>
-
 
 void dataProcessing(state *st) {
     uint32_t result;
@@ -144,9 +142,8 @@ void multiply(state *st) {
         if (result == 0) {
             st->cpsrFlag->zbit = 1;
         }
-        st->cpsrFlag->nbit = bitAccess(N_BIT, result);
+        st->cpsrFlag->nbit = extract(result, N_BIT, N_BIT+1);
     }
-
 }
 
 void branch(state *st) {
@@ -172,14 +169,15 @@ void singleDataTransfer(state *st) {
 
     if (st->decoded->isUp) {
         base_offset = rb + offset;
-    } else {
+    }
+    else {
         base_offset = rb - offset;
     }
 
     if (st->decoded->isPre) {
         memory_address = base_offset;
-    } else {
-
+    }
+    else {
         memory_address = rb;
         st->decoded->rn = rb;
     }
@@ -188,18 +186,15 @@ void singleDataTransfer(state *st) {
 
         addToMem(st, memory_address, (st->reg)[rd]);
 
-    } else {
-
-        (st->reg)[rd] = getFromMem(st, memory_address);
-
     }
-
+    else {
+        (st->reg)[rd] = getFromMem(st, memory_address);
+    }
 }
 
 void addToMem(state *st, uint32_t address, uint32_t value) {
-    int i;
-    for (i = 0; i < 4; i++) {
-        (st->memory)[address + i] = (uint8_t) bitsToNum(value, 0 + i * 8, 7 + i * 8);
+    for (int i = 0; i < 4; i++) {
+        (st->memory)[address + i] = (uint8_t) extract(value, 0 + i * 8, 8 + i * 8);
     }
 }
 
@@ -258,7 +253,6 @@ void setNZ(uint32_t check_value, state *st) {
     if (0 == check_value) {
         st->cpsrFlag->zbit = 1;
     }
-
 }
 
 void setC(state *st, int carry_out) {

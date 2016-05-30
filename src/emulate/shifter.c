@@ -1,4 +1,3 @@
-
 #include "shifter.h"
 
 shift_out setDefaultShift(uint32_t Rm_value) {

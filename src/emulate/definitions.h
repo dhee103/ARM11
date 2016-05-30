@@ -27,12 +27,36 @@
 #define P_BIT 24
 #define U_BIT 23
 #define L_BIT 20
-#define isBranch_bit 27
-#define isSDT_bit 26
-#define isMult_bit 25
+#define BRANCH_BIT 27
+#define SDT_BIT 26
+#define MULT_BIT_START 4
+#define MULT_BIT_END 8
 
 /* masks & shifts*/
-#define condMask 0xf
+#define COND_START 28
+#define COND_END 32
+#define OPCODE_START 21
+#define OPCODE_END 25
+#define OPERAND2_START 0
+#define OPERAND2_END 12
+#define RN_START 16
+#define RN_END 20
+#define RD_START 12
+#define RD_END 16
+#define M_RN_START 12
+#define M_RN_END 16
+#define M_RD_START 16
+#define M_RD_END 20
+#define RS_START 8
+#define RS_END 12
+#define RM_START 0
+#define RM_END 4
+#define SDT_OFFSET_START 0
+#define SDT_OFFSET_END 12
+#define BR_OFFSET_START 0
+#define BR_OFFSET_END 24
+
+
 #define condMask_shift 4
 #define opcodeMask 0x7
 #define oneMask 0x1 << 3
@@ -86,7 +110,6 @@ typedef enum {
 
 /* information held by the decoded instruction */
 typedef struct decoded_instruction {
-	COND condition;
 	OPCODE opcode;
 	SHIFT shift;
 	uint32_t shiftAmount;
