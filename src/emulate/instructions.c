@@ -228,7 +228,7 @@ uint32_t shifter_register(state *st, uint32_t offset) {
         case ASR:
             if (shifter >> 31 == 1) {
 //                result = (pow(2, rm) - 1);
-                result = (uint32_t) (1 << (rm - 1));
+                result = (uint32_t) ((1 << rm) - 1);
                 result = result << (32 - rm);
                 result = result | (shifter >> rm);
             }
@@ -237,9 +237,7 @@ uint32_t shifter_register(state *st, uint32_t offset) {
             }
             break;
     }
-
     return result;
-
 }
 
 void setNZ(uint32_t check_value, state *st) {
@@ -258,7 +256,6 @@ void setNZ(uint32_t check_value, state *st) {
 void setC(state *st, int carry_out) {
     st->cpsrFlag->cbit = (uint8_t) carry_out;
 }
-
 
 void setCadd(state *st, uint32_t first_value, uint32_t second_value) {
     st->cpsrFlag->cbit = 0;

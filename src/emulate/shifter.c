@@ -5,7 +5,6 @@ shift_out setDefaultShift(uint32_t Rm_value) {
     result.data = Rm_value;
     result.carry = 0;
     return result;
-
 }
 
 shift_out lsl(int shift_value, uint32_t Rm_value) {
@@ -108,9 +107,3 @@ uint32_t immValue(int rotate_value, uint32_t immV) {
     result = ror(num_rotate, immV).data;
     return result;
 }
-
-
-
-
-
-
