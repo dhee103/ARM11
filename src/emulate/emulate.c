@@ -3,16 +3,14 @@
 #include <stdio.h>
 
 int main(int argc, char **argv) {
-//initialise and allocate memory for reg and mem
+//initialises a virtual machines state comprising a simulated memory, registers, and associated instruction data
     state *st = newState();
-//    loads all the instructions into memory
+//populates the memory with instructions and data
     if (!loader(st,argc,argv)) {
         return EXIT_FAILURE;
     }
 
-//    fetch first instruction
-//    (pc already initialised to 0)
-//    decode first instruction
+//    termination check is run on each instruction cycle by reading the next instruction
     while (!isTerminate(st)) {
 //        printf("current instruction: ");
 //        printf("%04x\n",getInstruction(st));
