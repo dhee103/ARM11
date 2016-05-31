@@ -8,124 +8,118 @@ void dataProcessing(state *st) {
     uint32_t result;
     uint32_t second_operand;
     int carry_out = 0;
-//    str_decoded->condition = EQ;
-//    printf("%i\n",carry_out);
 
-    int pass_check = checkCond(st);
-//   printf("%i\n",pass_check);
-//    printf("%i\n,%i\n",carry_out,pass_check);
-//    /*for testing*/
-////    printf("check : %d\n", pass_check);
-//
-    if (1 == pass_check) {
-        if (1 == st->decoded->isImm) {
-            uint32_t imm = (st->decoded->operand2) & check_bit0_7;
-            int rotV = (int) (((st->decoded->operand2) & check_bit8_11) >> 8);
-            second_operand = immValue(rotV, imm);
+
+    if (1 == st->decoded->isImm) {
+        uint32_t imm = (st->decoded->operand2) & check_bit0_7;
+        int rotV = (int) (((st->decoded->operand2) & check_bit8_11) >> 8);
+        second_operand = immValue(rotV, imm);
 //            printf("Imm second op out: %i\n", second_operand);
-            /*for testing*/
+        /*for testing*/
 //            printBits(second_operand);
-        } else {
-            uint32_t rm = (st->decoded->operand2) & check_bit0_3;
+    } else {
+        uint32_t rm = (st->decoded->operand2) & check_bit0_3;
 //            printf("rm: %i\n", rm);
-            uint8_t shift = (uint8_t) (((st->decoded->operand2) & check_bit4_11) >> 4);
+        uint8_t shift = (uint8_t) (((st->decoded->operand2) & check_bit4_11) >> 4);
 //            printf("shift: %i\n", shift);
-            shift_out op2 = shifter(shift, (int) rm, st);
+        shift_out op2 = shifter(shift, (int) rm, st);
 //            printf("op2: %i\n", op2.data);
-            second_operand = op2.data;
-            carry_out = op2.carry;
-            /*for testing*/
+        second_operand = op2.data;
+        carry_out = op2.carry;
+        /*for testing*/
 //            printf("reg second op out: %i\n", second_operand);
-        }
+    }
 
+    switch (st->decoded->opcode) {
+        case AND :
+            result = st->reg[st->decoded->rn] & second_operand;
+            st->reg[st->decoded->rd] = result;
+            break;
+        case EOR :
+            result = st->reg[st->decoded->rn] ^ second_operand;
+            st->reg[st->decoded->rd] = result;
+            break;
+        case SUB :
+            result = st->reg[st->decoded->rn] - second_operand;
+            st->reg[st->decoded->rd] = result;
+            break;
+        case RSB :
+            result = second_operand - st->reg[st->decoded->rn];
+            st->reg[st->decoded->rd] = result;
+            break;
+        case ADD :
+//                printf("got to add\n");
+            result = st->reg[st->decoded->rn] + second_operand;
+//                printf("second op : %u\n", second_operand);
+            st->reg[st->decoded->rd] = result;
+            break;
+        case TST :
+            result = st->reg[st->decoded->rn] & second_operand;
+            break;
+        case TEQ :
+            result = st->reg[st->decoded->rn] ^ second_operand;
+            break;
+        case CMP :
+            result = st->reg[st->decoded->rn] - second_operand;
+            break;
+        case ORR :
+            result = st->reg[st->decoded->rn] | second_operand;
+            st->reg[st->decoded->rd] = result;
+            break;
+        case MOV :
+            /*PC = operand2*/
+//                printf("got to move\n");
+            result = second_operand;
+//                printBits(result);
+            st->reg[st->decoded->rd] = result;
+            break;
+    }
+//        printf("got out of first switch\n");
+    if (1 == st->decoded->isSet) {
         switch (st->decoded->opcode) {
             case AND :
-                result = st->reg[st->decoded->rn] & second_operand;
-                st->reg[st->decoded->rd] = result;
-                break;
             case EOR :
-                result = st->reg[st->decoded->rn] ^ second_operand;
-                st->reg[st->decoded->rd] = result;
+            case ORR :
+            case TEQ :
+            case TST :
+            case MOV :
+//                    printf("first case\n");
+                setC(st, carry_out);
                 break;
+
             case SUB :
-                result = st->reg[st->decoded->rn] - second_operand;
-                st->reg[st->decoded->rd] = result;
+            case CMP :
+//                    printf("second case\n");
+//                printf("%u\n", st->reg[st->decoded->rn]);
+//                printf("%u\n", second_operand);
+                setCsub(st, second_operand, st->reg[st->decoded->rn]);
                 break;
             case RSB :
-                result = second_operand - st->reg[st->decoded->rn];
-                st->reg[st->decoded->rd] = result;
+//                    printf("third case\n");
+                setCsub(st, st->reg[st->decoded->rn], second_operand);
                 break;
             case ADD :
-//                printf("got to add\n");
-                result = st->reg[st->decoded->rn] + second_operand;
-//                printf("second op : %u\n", second_operand);
-                st->reg[st->decoded->rd] = result;
-                break;
-            case TST :
-                result = st->reg[st->decoded->rn] & second_operand;
-                break;
-            case TEQ :
-                result = st->reg[st->decoded->rn] ^ second_operand;
-                break;
-            case CMP :
-                result = st->reg[st->decoded->rn] - second_operand;
-                break;
-            case ORR :
-                result = st->reg[st->decoded->rn] | second_operand;
-                st->reg[st->decoded->rd] = result;
-                break;
-            case MOV :
-                /*PC = operand2*/
-//                printf("got to move\n");
-                result = second_operand;
-//                printBits(result);
-                st->reg[st->decoded->rd] = result;
-                break;
-        }
-//        printf("got out of first switch\n");
-        if (1 == st->decoded->isSet) {
-            switch (st->decoded->opcode) {
-                case AND :
-                case EOR :
-                case ORR :
-                case TEQ :
-                case TST :
-                case MOV :
-//                    printf("first case\n");
-                    setC(st, carry_out);
-                    break;
-
-                case SUB :
-                case CMP :
-//                    printf("second case\n");
-                    setCsub(st, st->reg[st->decoded->rn], second_operand);
-                    break;
-                case RSB :
-//                    printf("third case\n");
-                    setCsub(st, second_operand, st->reg[st->decoded->rn]);
-                    break;
-                case ADD :
 //                    printf("fourth case\n");
-                    printf("%u\n", st->decoded->rn);
-                    setCadd(st, st->reg[st->decoded->rn], second_operand);
+//                printf("%u\n", st->decoded->rn);
+                setCadd(st, st->reg[st->decoded->rn], second_operand);
 //                    printf("end of fourth case\n");
-                    break;
+                break;
 
-            }
+        }
 //            printf("got out of second switch\n");
-            setNZ(result, st);
-            /*for testing*/
+        setNZ(result, st);
+        /*for testing*/
 //            printf("C_out %d\n",(st->cpsrFlag)->cbit);
 //            printf("Z_out %d\n",(st->cpsrFlag)->zbit);
 
-        }
+    }
 //        printf("finished loop\n");
-        /*for testing*/
+    /*for testing*/
 //        printf("carry_out %d\n", carry_out);
 
-        return;
-    }
+    return;
 }
+
 
 void multiply(state *st) {
     decoded_instr *decoded = st->decoded;
@@ -146,49 +140,75 @@ void multiply(state *st) {
     }
 }
 
-void branch(state *st) {
+int32_t signExt(int32_t offset) {
+    int32_t value = (OFFSET_BITS_MASK & offset);
+    if (OFFSET_SIGN_MASK & offset) {
+        value += NOT_OFFSET_BITS_MASK;
+    }
+    return value;
+}
 
-//    int32_t offset = (int32_t)((st->decoded->offset) << BRANCHSHIFT);
-    st->reg[PC] += (st->decoded->offset);
-//    if (st->reg[PC] > 8) {
-//        st->reg[PC] -= PC_AHEAD_BYTES;
-//    }
+void branch(state *st) {
+    int32_t offset = st->decoded->offset;
+    offset = signExt(offset << BRANCH_SHIFT);
+    st->reg[PC] += offset + PC_AHEAD_BYTES - BRANCH_AHEAD_BYTES;
 }
 
 void singleDataTransfer(state *st) {
     uint32_t offset = st->decoded->offset;
-    uint32_t rb = st->decoded->rn;
-    uint32_t rd = st->decoded->rd;
+    uint32_t base_reg = st->decoded->rn;
+    uint32_t src_reg = st->decoded->rd;
 
     if (st->decoded->isImm) {
         offset = shifter_register(st, offset);
     }
 
-    uint32_t memory_address;
-    uint32_t base_offset;
+    uint32_t base_offset = 0 ;
 
-    if (st->decoded->isUp) {
-        base_offset = rb + offset;
-    }
-    else {
-        base_offset = rb - offset;
+//    if (st->decoded->isUp) {
+//        base_offset = base_reg + offset;
+//    }
+//    else {
+//        base_offset = base_reg - offset;
+//    }->decoded-
+//
+//    if (st->decoded->isPre) {
+//        memory_address = base_offset;
+//    }
+//    else {
+//        memory_address = base_reg;
+//        st->decoded->rn = base_reg;
+//    }
+
+
+    if(st->decoded->isPre) {
+        if(st->decoded->isUp) {
+            base_offset = base_reg + offset;
+        }
+        else {
+            base_offset = base_reg - offset;
+        }
     }
 
-    if (st->decoded->isPre) {
-        memory_address = base_offset;
-    }
-    else {
-        memory_address = rb;
-        st->decoded->rn = rb;
-    }
+    uint32_t memory_address = st->reg[base_offset];
 
     if (st->decoded->isLoad) {
-
-        addToMem(st, memory_address, (st->reg)[rd]);
-
+        st->reg[src_reg] = *((uint32_t *) &st->memory[memory_address]);
+//                getFromMem(st, memory_address);
+//
+//
     }
     else {
-        (st->reg)[rd] = getFromMem(st, memory_address);
+        addToMem(st, memory_address, (st->reg)[src_reg]);
+    }
+
+    if (!st->decoded->isPre) {
+        if(st->decoded->isUp) {
+            st->decoded->rn += offset;
+        }
+        else {
+            st->decoded->rn -= offset;
+        }
     }
 }
 
@@ -267,10 +287,8 @@ void setCadd(state *st, uint32_t first_value, uint32_t second_value) {
 }
 
 void setCsub(state *st, uint32_t first_value, uint32_t second_value) {
-    (st->cpsrFlag)->cbit = 0;
-    int first_bit31 = (int) ((first_value & check_bit31) >> 31);
-    int second_bit31 = (int) ((second_value & check_bit31) >> 31);
-    if ((0 == first_bit31) && (1 == second_bit31)) {
-        (st->cpsrFlag)->cbit = 1;
+    st->cpsrFlag->cbit = 0;
+    if (second_value > first_value) {
+        st->cpsrFlag->cbit = 1;
     }
 }

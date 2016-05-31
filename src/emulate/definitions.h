@@ -11,9 +11,9 @@
 #define MEM_SIZE 65536
 #define NUM_REGISTERS 17
 #define PC 13
-#define CPSR 14
 #define PC_AHEAD_BYTES 8
 #define BITS_IN_BYTE 8
+#define BRANCH_AHEAD_BYTES 4
 
 /* Bit position */
 #define MS_BIT 31
@@ -32,7 +32,6 @@
 #define MULT_BIT_START 4
 #define MULT_BIT_END 8
 
-/* masks & shifts*/
 #define COND_START 28
 #define COND_END 32
 #define OPCODE_START 21
@@ -57,12 +56,16 @@
 #define BR_OFFSET_END 24
 
 
+/* masks & shifts*/
 #define condMask_shift 4
 #define opcodeMask 0x7
 #define oneMask 0x1 << 3
 #define opcodeMask_shift 13
 #define multMask 0x9 << 28
-#define BRANCHSHIFT 2
+#define OFFSET_SIGN_MASK 0x00080000
+#define OFFSET_BITS_MASK 0x00FFFFFF
+#define NOT_OFFSET_BITS_MASK 0xFF000000
+#define BRANCH_SHIFT 2
 #define check_bit31 0x80000000
 #define check_bit0 0x00000001
 #define check_bit4 0x01
