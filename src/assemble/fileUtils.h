@@ -14,6 +14,7 @@ typedef struct sourceData{
     uint32_t *labels;
     int numLines;
     int numInstructs;
+    int numLabels;
 } source;
 
 source * loadSource(int argc, char **argv);
