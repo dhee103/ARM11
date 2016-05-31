@@ -1,13 +1,21 @@
 #ifndef ASSEMBLER_H_INCLUDED
 #define ASSEMBLER_H_INCLUDED
 
-#define condMask 28
-#define IMask 25
-#define opcodeMask 21
-#define SMask 20
-#define RnMask 16
-#define RdMask 12
+#define condMask_DP 28
+#define IMask_DP 25
+#define opcodeMask_DP 21
+#define SMask_DP 20
+#define RnMask_DP 16
+#define RdMask_DP 12
+#define condMask_MUL 28
+#define AMask_MUL 21
+#define SMask_MUL 20
+#define RnMask_MUL 12
+#define RdMask_MUL 16
+#define Mask4_7_MUL 4
+#define RsMask_MUL 8
 #define COND_dataProcessing 0x0000000E
+#define COND_multiply 0x0000000E
 #define B_0 0x00000000
 #define B_1 0x00000001
 #define B_2 0x00000002
@@ -29,6 +37,8 @@ typedef struct instruction {
     char *mnemonic;
     char *rd;
     char *rn;
+    char *rs;
+    char *rm;
     char *operand2;
 
 } instruct;
