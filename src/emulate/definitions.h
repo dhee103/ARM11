@@ -10,10 +10,11 @@
 #define BYTES_IN_WORD 4
 #define MEM_SIZE 65536
 #define NUM_REGISTERS 17
-#define PC 13
+#define PC 15
 #define PC_AHEAD_BYTES 8
 #define BITS_IN_BYTE 8
 #define BRANCH_AHEAD_BYTES 4
+#define MAX_32_BIT_NUM 0xFFFFFFFF
 
 /* Bit position */
 #define MS_BIT 31

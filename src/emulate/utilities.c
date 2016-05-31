@@ -120,11 +120,9 @@ void freeState(state *st) {
         if (st->decoded != NULL) {
             free(st->decoded);
         }
-
         if (st->reg != NULL) {
             free(st->reg);
         }
-
         if (st->memory != NULL) {
             free(st->memory);
         }
