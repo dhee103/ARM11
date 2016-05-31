@@ -2,6 +2,7 @@
 <module type="CPP_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+<<<<<<< HEAD
       <sourceFolder url="file://$MODULE_DIR$/src/emulate/instructionCycle.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/emulate/setRegs.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/emulate/instructions.h" isTestSource="false" />
@@ -14,7 +15,11 @@
       <sourceFolder url="file://$MODULE_DIR$/src/emulate/shifter.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/emulate/utilities.c" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/emulate/shifter.c" isTestSource="false" />
+=======
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+>>>>>>> f1f6bb305c159bcd2c258dd4cbc79450eef0ba64
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/out" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
