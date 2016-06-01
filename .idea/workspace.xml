@@ -13,16 +13,7 @@
     </ADDITIONAL_GENERATION_ENVIRONMENT>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fc5efa5e-58c3-4479-b5b9-d075f6140bff" name="Default" comment="Removed test cases from src/emulate folder">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/emulate/.test.swp" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/emulate/ldr01" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/emulate/ldr01.out" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/emulate/ldr01.s" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/emulate/test" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/emulate/test.bin" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/emulate/instructions.c" afterPath="$PROJECT_DIR$/src/emulate/instructions.c" />
-    </list>
+    <list default="true" id="fc5efa5e-58c3-4479-b5b9-d075f6140bff" name="Default" comment="Removed test cases from src/emulate folder" />
     <ignored path="arm11_12.iws" />
     <ignored path=".idea/workspace.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
