@@ -104,7 +104,7 @@ void dataProcessing(state *st) {
 
         }
 //            printf("got out of second switch\n");
-        setNZ(st,result);
+        setNZ(st, result);
         /*for testing*/
 //            printf("C_out %d\n",(st->cpsrFlag)->cbit);
 //            printf("Z_out %d\n",(st->cpsrFlag)->zbit);
@@ -204,11 +204,9 @@ void multiply(state *st) {
         result += (uint32_t) st->reg[decoded->rn];
     }
     st->reg[decoded->rd] = result;
-    setNZ(st,result);
+    setNZ(st, result);
 
 }
-
-
 
 
 int32_t signExt(int32_t offset) {
@@ -282,14 +280,14 @@ shift_out shift(state *st) {
     shiftOut.data = offset;
     shiftOut.carry = carryBit;
     uint32_t instr = getInstruction(st);
-    uint32_t shiftAmount = extract(instr,SHIFT_AMOUNT_START,SHIFT_AMOUNT_END);
-    uint32_t rm = extract(instr,RM_START,RM_END);
-    uint32_t shiftType = extract(instr,SHIFT_T_START,SHIFT_T_END);
+    uint32_t shiftAmount = extract(instr, SHIFT_AMOUNT_START, SHIFT_AMOUNT_END);
+    uint32_t rm = extract(instr, RM_START, RM_END);
+    uint32_t shiftType = extract(instr, SHIFT_T_START, SHIFT_T_END);
 //    if (shiftAmount == 0) {
 //        return shiftOut;
 //    }
-    if (!extract(instr,OP_REG_BIT,OP_REG_BIT+1)) {
-        int signBit = extract(instr,MS_BIT,MS_BIT+1);
+    if (!extract(instr, OP_REG_BIT, OP_REG_BIT + 1)) {
+        int signBit = extract(instr, MS_BIT, MS_BIT + 1);
         uint32_t rightBits;
         uint32_t leftBits;
         switch (shiftType) {
@@ -304,7 +302,7 @@ shift_out shift(state *st) {
             case ASR:
                 offset = st->reg[rm] >> shiftAmount;
                 if (signBit) {
-                    uint32_t mask = MAX_MASK << (MAX_SHIFT-shiftAmount);
+                    uint32_t mask = MAX_MASK << (MAX_SHIFT - shiftAmount);
                     offset |= mask;
                 }
                 carryBit = shiftAmount - 1;
@@ -316,7 +314,7 @@ shift_out shift(state *st) {
                 carryBit = shiftAmount - 1;
                 break;
         }
-        if (shiftAmount==0) {
+        if (shiftAmount == 0) {
             carryBit = 0;
         }
         shiftOut.data = offset;
@@ -347,7 +345,7 @@ void singleDataTransfer(state *st) {
     uint32_t address = st->reg[decoded->rn];
 //    uint32_t address = decoded->rn''
     if (PC == decoded->rn) {
-        address+=8;
+        address += 8;
     }
 //    printf("address before pre: %u\n",address);
     if (decoded->isPre) {
@@ -425,10 +423,10 @@ uint32_t getFromMem(state *st, uint32_t address) {
 }
 
 uint32_t shifter_register(state *st, uint32_t offset) {
-    uint32_t rm = st->reg[extract(offset,0,4)];
-    uint32_t type = extract(offset,5,7);
+    uint32_t rm = st->reg[extract(offset, 0, 4)];
+    uint32_t type = extract(offset, 5, 7);
 //            (offset & 96) >> 5;
-    uint32_t val = extract(offset,7,12);
+    uint32_t val = extract(offset, 7, 12);
 //            offset >> 7;
 
     uint32_t result;
@@ -445,7 +443,7 @@ uint32_t shifter_register(state *st, uint32_t offset) {
             result |= val;
             break;
         case ASR:
-            if (extract(val,MS_BIT,MS_BIT+1)) {
+            if (extract(val, MS_BIT, MS_BIT + 1)) {
                 result = (uint32_t) ((1 << rm) - 1);
                 result = result << (32 - rm);
                 result = result | (val >> rm);
@@ -459,7 +457,7 @@ uint32_t shifter_register(state *st, uint32_t offset) {
 }
 
 void setNZ(state *st, uint32_t result) {
-    st->cpsrFlag->nbit = extract(result,N_BIT,N_BIT+1);
+    st->cpsrFlag->nbit = extract(result, N_BIT, N_BIT + 1);
     st->cpsrFlag->zbit = 0;
     if (0 == result) {
         st->cpsrFlag->zbit = 1;
