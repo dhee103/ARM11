@@ -1,8 +1,9 @@
 #include "instructionCycle.h"
 #include "utilities.h"
-#include "shifter.h"
 
-#include <stdio.h>
+/*  The following functions are used to decode the different types of
+ *  instructions
+ */
 
 void decode_data_process(state *st) {
     decoded_instr *decoded = st->decoded;
@@ -14,14 +15,6 @@ void decode_data_process(state *st) {
     decoded->operand2 = extract(instr, OPERAND2_START, OPERAND2_END);
     decoded->rn = extract(instr, RN_START, RN_END);
     decoded->rd = extract(instr, RD_START, RD_END);
-//    printf("data processing\n");
-//    printf("instr: %04x\n",instr);
-//    printf("opcode: %i\n", st->decoded->opcode);
-//    printf("Imm bit: %i\n", decoded->isImm);
-//    printf("set bit: %i\n", decoded->isSet);
-//    printf("operand2: %i\n", decoded->operand2);
-//    printf("rn: %i\n",decoded->rn);
-//    printf("rd: %i\n\n",decoded->rd);
 }
 
 void decode_multiply(state *st) {
@@ -47,16 +40,8 @@ void decode_single_data_transfer(state *st) {
     decoded->isUp = extract(instr, U_BIT, U_BIT+1);
     decoded->isPre = extract(instr, P_BIT, P_BIT+1);
     decoded->isImm = extract(instr, I_BIT, I_BIT+1);
-//    printf("\nimm: %i\n", decoded->isImm);
-//    printf("pre: %i\n", decoded->isPre);
-//    printf("up: %i\n", decoded->isUp);
-//    printf("load: %i\n", decoded->isLoad);
-//    printf("rn: %i\n", decoded->rn);
-//    printf("rd: %i\n", decoded->rd);
-//    printf("offset: %i\n\n", decoded->offset);
 }
 
-//TODO: Sort this out
 void decode_branch(state *st) {
     decoded_instr *decoded = st->decoded;
     memset(decoded, 0, sizeof(decoded_instr));

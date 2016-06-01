@@ -64,11 +64,7 @@
 
 
 /* masks & shifts*/
-#define condMask_shift 4
-#define opcodeMask 0x7
-#define oneMask 0x1 << 3
-#define opcodeMask_shift 13
-#define multMask 0x9 << 28
+
 #define MAX_MASK 0xFFFFFFFF
 #define MAX_SHIFT 32
 #define OFFSET_SIGN_MASK 0x00800000

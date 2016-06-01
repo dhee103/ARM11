@@ -16,21 +16,10 @@ void dataProcessing(state *st) {
         uint32_t imm = (decoded->operand2) & check_bit0_7;
         int rotV = (int) (((decoded->operand2) & check_bit8_11) >> 8);
         second_operand = immValue(rotV, imm);
-//            printf("Imm second op out: %i\n", second_operand);
-        /*for testing*/
-//            printBits(second_operand);
     } else {
-//        uint32_t rm = (decoded->operand2) & check_bit0_3;
-////            printf("rm: %i\n", rm);
-//        uint8_t shift = (uint8_t) (((decoded->operand2) & check_bit4_11) >> 4);
-////            printf("shift: %i\n", shift);
-//        shift_out op2 = shifter(shift, (int) rm, st);
-//            printf("op2: %i\n", op2.data);
         shift_out op2 = shift(st);
         second_operand = op2.data;
         carry_out = op2.carry;
-        /*for testing*/
-//            printf("reg second op out: %i\n", second_operand);
     }
 
     switch (decoded->opcode) {
@@ -47,9 +36,7 @@ void dataProcessing(state *st) {
             st->reg[decoded->rd] = second_operand - st->reg[decoded->rn];
             break;
         case ADD :
-//                printf("got to add\n");
             st->reg[decoded->rd] = st->reg[decoded->rn] + second_operand;
-//                printf("second op : %u\n", second_operand);
             break;
         case TST :
             result = st->reg[decoded->rn] & second_operand;
@@ -64,14 +51,9 @@ void dataProcessing(state *st) {
             st->reg[decoded->rd] = st->reg[decoded->rn] | second_operand;
             break;
         case MOV :
-            /*PC = operand2*/
-//                printf("got to move\n");
-//                printBits(result);
-//            printf("2nd op: %u\n",second_operand);
             st->reg[decoded->rd] = second_operand;
             break;
     }
-//        printf("got out of first switch\n");
     if (decoded->isSet) {
         switch (decoded->opcode) {
             case AND :
@@ -80,116 +62,25 @@ void dataProcessing(state *st) {
             case TEQ :
             case TST :
             case MOV :
-//                    printf("first case\n");
                 setC(st, carry_out);
                 break;
 
             case SUB :
             case CMP :
-//                    printf("second case\n");
-//                printf("%u\n", st->reg[decoded->rn]);
-//                printf("%u\n", second_operand);
                 setCsub(st, second_operand, st->reg[decoded->rn]);
                 break;
             case RSB :
-//                    printf("third case\n");
                 setCsub(st, st->reg[decoded->rn], second_operand);
                 break;
             case ADD :
-//                    printf("fourth case\n");
-//                printf("%u\n", decoded->rn);
                 setCadd(st, st->reg[decoded->rn], second_operand);
-//                    printf("end of fourth case\n");
                 break;
 
         }
-//            printf("got out of second switch\n");
         setNZ(st, result);
-        /*for testing*/
-//            printf("C_out %d\n",(st->cpsrFlag)->cbit);
-//            printf("Z_out %d\n",(st->cpsrFlag)->zbit);
-
     }
-//        printf("finished loop\n");
-    /*for testing*/
-//        printf("carry_out %d\n", carry_out);
-
     return;
 }
-
-
-//void dataProcessing(state *st) {
-//    decoded_instr *decoded = st->decoded;
-//
-//    assert(decoded->rd != PC && decoded->rn != PC && decoded->rs != PC && decoded->rm != PC);
-//
-//    uint32_t operand2;
-//    int carry = 0;
-//    if (decoded->isImm) {
-//        operand2 = decoded->immValue;
-//        shift_(data, ROR, shiftValue);
-//    } else {
-//        shift_o output = shiftReg(st);
-//        operand2 = output.data;
-//        carry = output.carry;
-//    }
-//
-//    //switches on the opcode and then carries out the operation
-//    uint32_t result = 0;
-//    switch (decoded->opcode) {
-//        case AND:
-//        case TST:
-//            result = st->reg[decoded->rn] & operand2;
-//            break;
-//        case EOR:
-//        case TEQ:
-//            result = st->reg[decoded->rn] ^ operand2;
-//            break;
-//        case SUB:
-//        case CMP:
-//            result = (int32_t) st->reg[decoded->rn] - (int32_t) operand2;
-//            carry = st->reg[decoded->rn] >= operand2;
-//            break;
-//        case RSB:
-//            result = (int32_t) operand2 - (int32_t) st->reg[decoded->rn];
-//            carry = operand2 >= st->reg[decoded->rn];
-//            break;
-//        case ADD:
-//            result = (int32_t) st->reg[decoded->rn]
-//                     + (int32_t) operand2;
-//            carry = st->reg[decoded->rn] > UINT32_MAX - operand2;
-//            break;
-//        case ORR:
-//            result = st->reg[decoded->rn] | operand2;
-//            break;
-//        case MOV:
-//            result = operand2;
-//            break;
-//    }
-//
-//    //switches on the opcode once again
-//    //determines when to writes the result to rd
-//    switch (decoded->opcode) {
-//        case TST:
-//        case TEQ:
-//        case CMP:
-//            break;
-//        default:
-//            st->reg[decoded->rd] = result;
-//            break;
-//    }
-//
-//    //sets the flags if needed
-//    if (decoded->isSet) {
-//        setFlag(st, carry, C_BIT);
-//        if (result == 0) {
-//            setFlag(st, 1, Z_BIT);
-//        } else {
-//            setFlag(st, 0, Z_BIT);
-//        }
-//        setFlag(st, maskBits(result, TOP_BIT, TOP_BIT), N_BIT);
-//    }
-//}
 
 
 
@@ -223,56 +114,6 @@ void branch(state *st) {
     st->reg[PC] += offset + PC_AHEAD_BYTES - BRANCH_AHEAD_BYTES;
 }
 
-//void singleDataTransfer(state *st) {
-//    decoded_instr *decoded = st->decoded;
-//    uint32_t offset = decoded->offset;
-//    uint32_t base_reg = decoded->rn;
-//    uint32_t src_reg = decoded->rd;
-//
-//    if (decoded->isImm) {
-//        offset = shifter_register(st, offset);
-//    }
-//
-//    uint32_t base_offset = 0 ;
-//
-//    if(decoded->isPre) {
-//        if(decoded->isUp) {
-//            base_offset = base_reg + offset;
-//        }
-//        else {
-//            base_offset = base_reg - offset;
-//        }
-//    }
-//
-//    uint32_t memory_address = st->reg[base_offset];
-//    int isGPIO = isGpioAddress(memory_address);
-//    if (memory_address > MEM_SIZE && !isGPIO) {
-//        printf("Error: Out of bounds memory access at address 0x%08x\n",memory_address);
-//        return;
-//    }
-//    if (!isGPIO) {
-//        if (decoded->isLoad) {
-//            st->reg[src_reg] = *((uint32_t *) &st->memory[memory_address]);
-////                getFromMem(st, memory_address);
-//        }
-//        else {
-//            addToMem(st, memory_address, (st->reg)[src_reg]);
-//        }
-//    }
-//    else if (decoded->isLoad) {
-//        st->reg[src_reg] = memory_address;
-//    }
-//
-//    if (!decoded->isPre) {
-//        if(decoded->isUp) {
-//            decoded->rn += offset;
-//        }
-//        else {
-//            decoded->rn -= offset;
-//        }
-//    }
-//}
-
 shift_out shift(state *st) {
     shift_out shiftOut;
     int carryBit = 0;
@@ -283,9 +124,7 @@ shift_out shift(state *st) {
     uint32_t shiftAmount = extract(instr, SHIFT_AMOUNT_START, SHIFT_AMOUNT_END);
     uint32_t rm = extract(instr, RM_START, RM_END);
     uint32_t shiftType = extract(instr, SHIFT_T_START, SHIFT_T_END);
-//    if (shiftAmount == 0) {
-//        return shiftOut;
-//    }
+
     if (!extract(instr, OP_REG_BIT, OP_REG_BIT + 1)) {
         int signBit = extract(instr, MS_BIT, MS_BIT + 1);
         uint32_t rightBits;
@@ -335,7 +174,6 @@ void singleDataTransfer(state *st) {
         offset = shift(st).data;
     } else {
         offset = decoded->offset;
-//        printf("offset: %u\n",offset);
     }
 
     if (!decoded->isUp) {
@@ -343,17 +181,16 @@ void singleDataTransfer(state *st) {
     }
 
     uint32_t address = st->reg[decoded->rn];
-//    uint32_t address = decoded->rn''
+
     if (PC == decoded->rn) {
         address += 8;
     }
-//    printf("address before pre: %u\n",address);
+
     if (decoded->isPre) {
         address += offset;
-//        printf("address: %u\n",address);
+
     }
-//    printf("offset after pre & up: %u\n",offset);
-//    printf("address after pre: %u\n",address);
+
 
     int isGpio = isGpioAddress(address);
     if (address > MEM_SIZE && !isGpio) {
@@ -365,10 +202,8 @@ void singleDataTransfer(state *st) {
     if (!isGpio) {
         if (decoded->isLoad) {
             st->reg[decoded->rd] = getFromMem(st, address);
-//                    getFromMem(st, address);
-//                    *((uint32_t *) &st->memory[address]);
+
         } else {
-//            *((uint32_t *) &st->memory[address]) = st->reg[decoded->rd];
             addToMem(st, address, (st->reg)[decoded->rd]);
         }
     } else if (decoded->isLoad) {
@@ -376,7 +211,6 @@ void singleDataTransfer(state *st) {
     }
 
     if (!decoded->isPre) {
-//        address += offset;
         if (decoded->rn == PC) {
             offset += PC_AHEAD_BYTES;
         }
@@ -418,40 +252,6 @@ uint32_t getFromMem(state *st, uint32_t address) {
     uint32_t result = 0;
     for (int i = 0; i < 4; i++) {
         result = result | (((uint32_t) (st->memory)[address + i]) << (i * 8));
-    }
-    return result;
-}
-
-uint32_t shifter_register(state *st, uint32_t offset) {
-    uint32_t rm = st->reg[extract(offset, 0, 4)];
-    uint32_t type = extract(offset, 5, 7);
-//            (offset & 96) >> 5;
-    uint32_t val = extract(offset, 7, 12);
-//            offset >> 7;
-
-    uint32_t result;
-    switch (type) {
-        case LSL:
-            result = val << rm;
-            break;
-        case LSR:
-            result = val >> rm;
-            break;
-        case ROR:
-            result = val >> rm;
-            val = val << (32 - rm);
-            result |= val;
-            break;
-        case ASR:
-            if (extract(val, MS_BIT, MS_BIT + 1)) {
-                result = (uint32_t) ((1 << rm) - 1);
-                result = result << (32 - rm);
-                result = result | (val >> rm);
-            }
-            else {
-                result = val >> rm;
-            }
-            break;
     }
     return result;
 }
