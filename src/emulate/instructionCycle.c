@@ -46,13 +46,13 @@ void decode_single_data_transfer(state *st) {
     decoded->isUp = extract(instr, U_BIT, U_BIT+1);
     decoded->isPre = extract(instr, P_BIT, P_BIT+1);
     decoded->isImm = extract(instr, I_BIT, I_BIT+1);
-//    printf("imm: %i\n", decoded->isImm);
+//    printf("\nimm: %i\n", decoded->isImm);
 //    printf("pre: %i\n", decoded->isPre);
 //    printf("up: %i\n", decoded->isUp);
 //    printf("load: %i\n", decoded->isLoad);
 //    printf("rn: %i\n", decoded->rn);
 //    printf("rd: %i\n", decoded->rd);
-//    printf("offset: %i\n", decoded->offset);
+//    printf("offset: %i\n\n", decoded->offset);
 }
 
 //TODO: Sort this out

@@ -13,6 +13,7 @@
 #define PC 15
 #define PC_AHEAD_BYTES 8
 #define BITS_IN_BYTE 8
+#define BITS_IN_WORD 32
 #define BRANCH_AHEAD_BYTES 4
 #define MAX_32_BIT_NUM 0xFFFFFFFF
 
@@ -32,6 +33,7 @@
 #define SDT_BIT 26
 #define MULT_BIT_START 4
 #define MULT_BIT_END 8
+#define OP_REG_BIT 4
 
 #define COND_START 28
 #define COND_END 32
@@ -55,6 +57,10 @@
 #define SDT_OFFSET_END 12
 #define BR_OFFSET_START 0
 #define BR_OFFSET_END 24
+#define SHIFT_T_START 5
+#define SHIFT_T_END 7
+#define SHIFT_AMOUNT_START 7
+#define SHIFT_AMOUNT_END 12
 
 
 /* masks & shifts*/
@@ -63,6 +69,8 @@
 #define oneMask 0x1 << 3
 #define opcodeMask_shift 13
 #define multMask 0x9 << 28
+#define MAX_MASK 0xFFFFFFFF
+#define MAX_SHIFT 32
 #define OFFSET_SIGN_MASK 0x00080000
 #define OFFSET_BITS_MASK 0x00FFFFFF
 #define NOT_OFFSET_BITS_MASK 0xFF000000
