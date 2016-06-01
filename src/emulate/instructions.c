@@ -20,12 +20,13 @@ void dataProcessing(state *st) {
         /*for testing*/
 //            printBits(second_operand);
     } else {
-        uint32_t rm = (decoded->operand2) & check_bit0_3;
-//            printf("rm: %i\n", rm);
-        uint8_t shift = (uint8_t) (((decoded->operand2) & check_bit4_11) >> 4);
-//            printf("shift: %i\n", shift);
-        shift_out op2 = shifter(shift, (int) rm, st);
+//        uint32_t rm = (decoded->operand2) & check_bit0_3;
+////            printf("rm: %i\n", rm);
+//        uint8_t shift = (uint8_t) (((decoded->operand2) & check_bit4_11) >> 4);
+////            printf("shift: %i\n", shift);
+//        shift_out op2 = shifter(shift, (int) rm, st);
 //            printf("op2: %i\n", op2.data);
+        shift_out op2 = shift(st);
         second_operand = op2.data;
         carry_out = op2.carry;
         /*for testing*/
@@ -271,9 +272,10 @@ void branch(state *st) {
 //    }
 //}
 
-shift_out shift(state *st, int32_t offset) {
+shift_out shift(state *st) {
     shift_out shiftOut;
     int carryBit = 0;
+    uint32_t offset = 0;
     shiftOut.data = offset;
     shiftOut.carry = carryBit;
     uint32_t instr = getInstruction(st);
@@ -329,7 +331,7 @@ void singleDataTransfer(state *st) {
 
     int32_t offset;
     if (decoded->isImm) {
-        offset = shift(st,offset).data;
+        offset = shift(st).data;
     } else {
         offset = decoded->offset;
 //        printf("offset: %u\n",offset);

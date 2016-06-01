@@ -157,7 +157,7 @@ int isTerminate(state *st) {
 /* selects the instruction based on bits 27 to 25 and bits 7 to 4 in the case of multiply */
 void  selectInstruction(state *st) {
     uint32_t instr = getInstruction(st);
-
+//    printf("select instr\n");
     if (extract(instr,BRANCH_BIT,BRANCH_BIT+1)) {
 //        printf("branch\n");
         decode_branch(st);
@@ -168,14 +168,14 @@ void  selectInstruction(state *st) {
         decode_single_data_transfer(st);
         singleDataTransfer(st);
     }
-    else if (!extract(instr, I_BIT, I_BIT+1) && extract(instr,MULT_BIT_START,MULT_BIT_END)) {
+    else if (!extract(instr, I_BIT, I_BIT+1) && extract(instr,MULT_BIT_START,MULT_BIT_END)==9) {
 //        printf("multiply\n");
         decode_multiply(st);
         multiply(st);
     }
     else {
 //        printf("data process\n");
-        decode_process_data(st);
+        decode_data_process(st);
         dataProcessing(st);
     }
 }
@@ -183,6 +183,7 @@ void  selectInstruction(state *st) {
 // checks whether the condition holds for the current instruction
 int checkCond(state *st) {
     uint32_t instruction = getInstruction(st);
+//    printf("cond\n");
     switch (extract(instruction,COND_START,COND_END)) {
         case EQ :
             return st->cpsrFlag->zbit;
