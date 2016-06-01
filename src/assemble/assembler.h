@@ -16,6 +16,7 @@
 #define RsMask_MUL 8
 #define COND_dataProcessing 0x0000000E
 #define COND_multiply 0x0000000E
+#define shiftMask_special 7
 #define B_0 0x00000000
 #define B_1 0x00000001
 #define B_2 0x00000002
@@ -40,7 +41,7 @@ typedef struct instruction {
     char *rs;
     char *rm;
     char *operand2;
-
+    char *expression;
 } instruct;
 
 typedef struct operand2_state {

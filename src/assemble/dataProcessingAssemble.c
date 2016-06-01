@@ -121,50 +121,38 @@ if (0 == strcmp(reg,"r0")){
 
 opDetails getOpcodeDetails(char * mnemonic) {
     opDetails result;
-    /*printf("enter getOp\n");*/
-if(0 == strcmp(mnemonic,"and")) {
-    /*printf("got and\n");*/
-    result.opcode = AND;
-    result.opcode_binary = B_0;
-} else if(0 == strcmp(mnemonic,"eor")) {
-    /*printf("got eor\n");*/
-    result.opcode = EOR;
-    result.opcode_binary = B_1;
-} else if(0 == strcmp(mnemonic,"sub")) {
-    /*printf("got sub\n");*/
-    result.opcode = SUB;
-    result.opcode_binary = B_2;
-} else if(0 == strcmp(mnemonic,"rsb")) {
-    /*printf("got rsb\n");*/
-    result.opcode = RSB;
-    result.opcode_binary = B_3;
-} else if(0 == strcmp(mnemonic,"add")) {
-    /*printf("got add\n");*/
-    result.opcode = ADD;
-    result.opcode_binary = B_4;
-} else if(0 == strcmp(mnemonic,"orr")) {
-    /*printf("got orr\n");*/
-    result.opcode = ORR;
-    result.opcode_binary = B_C;
-} else if(0 == strcmp(mnemonic,"mov")) {
-    /*printf("got mov\n");*/
-    result.opcode = MOV;
-    result.opcode_binary = B_D;
-} else if(0 == strcmp(mnemonic,"tst")) {
-    /*printf("got tst\n");*/
-    result.opcode = TST;
-    result.opcode_binary = B_8;
-} else if(0 == strcmp(mnemonic,"teq")) {
-    /*printf("got teq\n");*/
-    result.opcode = TEQ;
-    result.opcode_binary = B_9;
-} else if(0 == strcmp(mnemonic,"cmp")) {
-    /*printf("got cmp\n");*/
-    result.opcode = CMP;
-    result.opcode_binary = B_A;
-}
-/*printf("out getOp\n");*/
-return result;
+    if(0 == strcmp(mnemonic,"and")) {
+        result.opcode = AND;
+        result.opcode_binary = B_0;
+    } else if(0 == strcmp(mnemonic,"eor")) {
+        result.opcode = EOR;
+        result.opcode_binary = B_1;
+    } else if(0 == strcmp(mnemonic,"sub")) {
+        result.opcode = SUB;
+        result.opcode_binary = B_2;
+    } else if(0 == strcmp(mnemonic,"rsb")) {
+        result.opcode = RSB;
+        result.opcode_binary = B_3;
+    } else if(0 == strcmp(mnemonic,"add")) {
+        result.opcode = ADD;
+        result.opcode_binary = B_4;
+    } else if(0 == strcmp(mnemonic,"orr")) {
+        result.opcode = ORR;
+        result.opcode_binary = B_C;
+    } else if(0 == strcmp(mnemonic,"mov")) {
+        result.opcode = MOV;
+        result.opcode_binary = B_D;
+    } else if(0 == strcmp(mnemonic,"tst")) {
+        result.opcode = TST;
+        result.opcode_binary = B_8;
+    } else if(0 == strcmp(mnemonic,"teq")) {
+        result.opcode = TEQ;
+        result.opcode_binary = B_9;
+    } else if(0 == strcmp(mnemonic,"cmp")) {
+        result.opcode = CMP;
+        result.opcode_binary = B_A;
+    }
+    return result;
 }
 uint32_t convertOP2(uint32_t op2_32bit) {
     uint32_t rot;
@@ -179,6 +167,7 @@ uint32_t convertOP2(uint32_t op2_32bit) {
         }
         if(1 == condition) {
             printf("shift\n");
+            /*shift value = n -> shift 2n times*/
             op2_32bit = op2_32bit >> 2;
             rotate_value++;
         }
@@ -190,13 +179,33 @@ uint32_t convertOP2(uint32_t op2_32bit) {
     }
     return result;
 }
+uint32_t getExpression(char * exp) {
+    uint32_t result = B_0;
+    exp++;
+    if(('0' == exp[0]) && ('x' == exp[1])) {
+        uint32_t temp;
+        int i = 0;
+        exp += 2;
+        while('\0' != exp[i]) {
+            temp = digit_to_uint32(exp[i]);
+            result = (result << 4) + temp;
+            i++;
+        }
+
+    } else {
+            result = (uint32_t)atoi(exp);
+            printBits(result);
+    }
+    return result;
+}
+
 op2_state getOP2Details(char * operand2) {
     op2_state result;
     result.data = B_0;
     result.Imm = B_0;
     if('#' == operand2[0]) {
         result.Imm = B_1;
-        operand2++;
+        /*operand2++;
         if(('0' == operand2[0]) && ('x' == operand2[1])) {
             uint32_t temp;
             int i = 0;
@@ -209,7 +218,8 @@ op2_state getOP2Details(char * operand2) {
 
         } else {
             result.data = (uint32_t)atoi(operand2);
-        }
+        }*/
+        result.data = getExpression(operand2);
         result.data = convertOP2(result.data);
     } else {
         result.data = getRegAddress(operand2);
@@ -228,13 +238,7 @@ uint32_t assembler_dataProcessing(instruct *ins) {
     uint32_t Operand2 = op2.data;
     opDetails ins_op = getOpcodeDetails(ins->mnemonic);
     uint32_t opcode = ins_op.opcode_binary;
-    /*printf("%s\n",ins->mnemonic);
-    printf("%s\n",ins->operand2);
-    printf("%s\n",ins->rd);
-    printf("%d\n",ins_op.opcode);
-    printBits(ins_op.opcode_binary);*/
     switch(ins_op.opcode) {
-        /*printf("got here\n");*/
                 case AND :
                 case EOR :
                 case ORR :
@@ -251,7 +255,6 @@ uint32_t assembler_dataProcessing(instruct *ins) {
                     Rn = getRegAddress(ins->rn);
                     break;
                 case MOV :
-                    /*printf("got here\n");*/
                     Rd = getRegAddress(ins->rd);
                     break;
 
@@ -297,7 +300,35 @@ uint32_t assembler_multiply(instruct *ins) {
     return result;
 }
 
+uint32_t assembler_special(instruct *ins) {
+    uint32_t result =B_0;
 
+    if(0 == strcmp(ins->mnemonic,"lsl")) {
+        uint32_t shift_value;
+        uint32_t Operand2;
+        /*lsl is a mov so cond = COND_dataProcessing*/
+        uint32_t cond = COND_dataProcessing;
+        /*from mov*/
+        uint32_t S = B_0;
+        uint32_t Rd = B_0;
+        opDetails ins_op = getOpcodeDetails("mov");
+        uint32_t opcode = ins_op.opcode_binary;
+        shift_value = getExpression(ins->expression);
+        Rd = getRegAddress(ins->rn);
+        Operand2 = Rd;
+        cond = cond << condMask_DP;
+        opcode = opcode << opcodeMask_DP;
+        S = S << SMask_DP;
+        Rd = Rd << RdMask_DP;
+        shift_value = shift_value << shiftMask_special;
+        Operand2 = Operand2 | shift_value;
+        result = result | cond | opcode | S | Rd | Operand2;
+        printBits(result);
+        result = bigToLitteEndian(result);
+    }
+
+    return result;
+}
 
 int main(void) {
     /*op2_state oper2 = getOP2Details("#50331648");
@@ -307,12 +338,13 @@ int main(void) {
     printBits(oper2_Imm);*/
     uint32_t out_assembler;
     instruct *instr = malloc(sizeof(instruct));
-    instr->mnemonic = "mla";
-    instr->rd = "r3";
+    instr->mnemonic = "lsl";
+    instr->expression = "#1";
+    /*instr->rd = "r3";
     instr->rm = "r1";
-    instr->rs = "r2";
-    instr->rn = "r4";
-    out_assembler = assembler_multiply(instr);
+    instr->rs = "r2";*/
+    instr->rn = "r1";
+    out_assembler = assembler_special(instr);
     printBits(out_assembler);
 return 0;
 }
