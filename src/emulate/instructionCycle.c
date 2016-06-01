@@ -61,6 +61,5 @@ void decode_branch(state *st) {
     decoded_instr *decoded = st->decoded;
     memset(decoded, 0, sizeof(decoded_instr));
     uint32_t instr = getInstruction(st);
-    int32_t offset = extract(instr, BR_OFFSET_START, BR_OFFSET_END);
-    decoded->offset = asr(6,(lsl(8,offset).data)).data;
+    decoded->offset = extract(instr, BR_OFFSET_START, BR_OFFSET_END);
 }

@@ -208,6 +208,9 @@ void multiply(state *st) {
 
 }
 
+
+
+
 int32_t signExt(int32_t offset) {
     int32_t value = (OFFSET_BITS_MASK & offset);
     if (OFFSET_SIGN_MASK & offset) {
@@ -363,7 +366,7 @@ void singleDataTransfer(state *st) {
 
     if (!isGpio) {
         if (decoded->isLoad) {
-            st->reg[decoded->rd] = *((uint32_t *) &st->memory[address]);
+            st->reg[decoded->rd] = getFromMem(st, address);
 //                    getFromMem(st, address);
 //                    *((uint32_t *) &st->memory[address]);
         } else {

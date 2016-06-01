@@ -18,6 +18,7 @@ int main(int argc, char **argv) {
             selectInstruction(st);
         }
 //        increment pc
+//        output(st);
         st->reg[PC] += BYTES_IN_WORD;
     }
 
