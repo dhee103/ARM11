@@ -63,6 +63,31 @@ opDetails getOpcodeDetails(char * mnemonic) {
     return result;
 }
 
+uint32_t convertOP2(uint32_t op2_32bit) {
+    uint32_t rot;
+    uint32_t result = op2_32bit;
+    int condition = 1;
+    int rotate_value = 0;
+    while(1 == condition) {
+        int bit0 = (int)(op2_32bit & B_1);
+        int bit1 = (int)((op2_32bit & B_2)>>1);
+        if((1 == bit0) || (1 == bit1)) {
+            condition = 0;
+        }
+        if(1 == condition) {
+            /*shift value = n -> shift 2n times*/
+            op2_32bit = op2_32bit >> 2;
+            rotate_value++;
+        }
+    }
+    if(0 != rotate_value) {
+        /*rotate backward (1 round is 16)*/
+        rot = (uint32_t)(16 - rotate_value);
+        result = op2_32bit | (rot << 8);
+    }
+    return result;
+}
+
 
 uint32_t assembler_dataProcessing(instruct *ins) {
     uint32_t result = B_0;
@@ -94,6 +119,10 @@ uint32_t assembler_dataProcessing(instruct *ins) {
                     Rd = ins->rd;
                     break;
 
+    }
+    /*rotate value that is bigger than 8 bit*/
+    if(Operand2 > 0x000000FF) {
+        Operand2 = convertOP2(Operand2);
     }
     cond = cond << condMask_DP;
     I = I << IMask_DP;
@@ -135,6 +164,7 @@ uint32_t assembler_multiply(instruct *ins) {
     return result;
 }
 
+
 uint32_t assembler_special(instruct *ins) {
     uint32_t result =B_0;
 
@@ -149,7 +179,7 @@ uint32_t assembler_special(instruct *ins) {
         opDetails ins_op = getOpcodeDetails("mov");
         uint32_t opcode = ins_op.opcode_binary;
         shift_value = ins->expression;
-        Rd = ins->rn;
+        Rd = ins->rd;
         Operand2 = Rd;
         cond = cond << condMask_DP;
         opcode = opcode << opcodeMask_DP;
@@ -158,7 +188,6 @@ uint32_t assembler_special(instruct *ins) {
         shift_value = shift_value << shiftMask_special;
         Operand2 = Operand2 | shift_value;
         result = result | cond | opcode | S | Rd | Operand2;
-        printBits(result);
         result = bigToLitteEndian(result);
     }
 
@@ -172,14 +201,58 @@ int main(void) {
     printBits(oper2_data);
     printBits(oper2_Imm);*/
     uint32_t out_assembler;
+    uint32_t out_assembler2;
+    uint32_t out_assembler3;
+    uint32_t out_assembler4;
     instruct *instr = malloc(sizeof(instruct));
-    instr->mnemonic = "lsl";
-    instr->expression = 1;
-    /*instr->rd = "r3";
-    instr->rm = "r1";
-    instr->rs = "r2";*/
-    instr->rn = 1;
-    out_assembler = assembler_special(instr);
+    instruct *instr2 = malloc(sizeof(instruct));
+    instruct *instr3 = malloc(sizeof(instruct));
+    instruct *instr4 = malloc(sizeof(instruct));
+
+
+    instr->mnemonic = "mov";
+    instr->expression = 0;
+    instr->rd = 1;
+    instr->operand2 = 1;
+    instr->rm = 0;
+    instr->rs = 0;
+    instr->rn = 0;
+    instr->Imm = 1;
+    out_assembler = assembler_dataProcessing(instr);
     printBits(out_assembler);
+
+    instr2->mnemonic = "mov";
+    instr2->expression = 0;
+    instr2->rd = 2;
+    instr2->operand2 = 23;
+    instr2->rm = 0;
+    instr2->rs = 0;
+    instr2->rn = 1;
+    instr2->Imm = 1;
+    out_assembler2 = assembler_dataProcessing(instr2);
+    printBits(out_assembler2);
+
+
+    instr3->mnemonic = "tst";
+    instr3->expression = 0;
+    instr3->rd = 2;
+    instr3->operand2 = 1;
+    instr3->rm = 1;
+    instr3->rs = 2;
+    instr3->rn = 1;
+    instr3->Imm = 0;
+    out_assembler3 = assembler_dataProcessing(instr3);
+    printBits(out_assembler3);
+
+    instr4->mnemonic = "andeq";
+    instr4->expression = 0;
+    instr4->rd = 4;
+    instr4->operand2 = 205;
+    instr4->rm = 1;
+    instr4->rs = 2;
+    instr4->rn = 4;
+    instr4->Imm = 1;
+    out_assembler4 = assembler_special(instr4);
+    printBits(out_assembler4);
 return 0;
 }
