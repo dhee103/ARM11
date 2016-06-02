@@ -31,10 +31,13 @@
 #define L_BIT 20
 #define BRANCH_BIT 27
 #define SDT_BIT 26
-#define MULT_BIT_START 4
-#define MULT_BIT_END 8
 #define OP_REG_BIT 4
 
+/* Bit positions for extracting multiple bits at a time using the closed open
+ * interval
+ */
+#define MULT_BIT_START 4
+#define MULT_BIT_END 8
 #define COND_START 28
 #define COND_END 32
 #define OPCODE_START 21
@@ -62,9 +65,7 @@
 #define SHIFT_AMOUNT_START 7
 #define SHIFT_AMOUNT_END 12
 
-
 /* masks & shifts*/
-
 #define MAX_MASK 0xFFFFFFFF
 #define MAX_SHIFT 32
 #define OFFSET_SIGN_MASK 0x00800000
@@ -74,14 +75,12 @@
 #define check_bit31 0x80000000
 #define check_bit0 0x00000001
 #define check_bit4 0x01
-#define check_shift_type 0x06
-#define check_shift_value 0xF8
-#define check_Rs 0xf0
-#define check_bit0_7 0x000000FF
-#define check_bit8_11 0x00000F00
-#define check_bit0_3 0x0000000F
-#define check_bit4_11 0x00000FF0
-#define FULLSHIFT 31
+#define MASK_SHIFT_TYPE 0x06
+#define MASK_SHIFT_VALUE 0xF8
+#define MASK_RS 0xf0
+#define MASK_IMM 0x000000FF
+#define MASK_ROT 0x00000F00
+#define SHIFT_ROT 8
 
 /* Enum named COND for instruction condition */
 typedef enum {

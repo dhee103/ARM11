@@ -14,10 +14,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fc5efa5e-58c3-4479-b5b9-d075f6140bff" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/emulate/Makefile" afterPath="$PROJECT_DIR$/src/emulate/Makefile" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/emulate/definitions.h" afterPath="$PROJECT_DIR$/src/emulate/definitions.h" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/emulate/instructions.c" afterPath="$PROJECT_DIR$/src/emulate/instructions.c" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/emulate/instructions.h" afterPath="$PROJECT_DIR$/src/emulate/instructions.h" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/emulate/shifter.c" afterPath="$PROJECT_DIR$/src/emulate/shifter.c" />
     </list>
     <ignored path="arm11_12.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -38,11 +39,21 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="emulate.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/emulate/emulate.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="36">
+              <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="definitions.h" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/emulate/definitions.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="450">
-              <caret line="118" column="59" selection-start-line="118" selection-start-column="59" selection-end-line="118" selection-end-column="59" />
+            <state relative-caret-position="534">
+              <caret line="79" column="20" selection-start-line="79" selection-start-column="20" selection-end-line="79" selection-end-column="20" />
               <folding>
                 <element signature="e#132#151#0" expanded="true" />
               </folding>
@@ -50,11 +61,21 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="shifter.c" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/emulate/shifter.c">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1278">
+              <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="instructions.c" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/emulate/instructions.c">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="232" column="22" selection-start-line="232" selection-start-column="22" selection-end-line="232" selection-end-column="22" />
+            <state relative-caret-position="-366">
+              <caret line="185" column="0" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
               <folding>
                 <element signature="e#0#25#0" expanded="true" />
               </folding>
@@ -62,11 +83,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="emulate.c" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/emulate/emulate.c">
+      <file leaf-file-name="instructions.h" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/emulate/instructions.h">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="36">
-              <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+            <state relative-caret-position="306">
+              <caret line="17" column="27" selection-start-line="17" selection-start-column="27" selection-end-line="17" selection-end-column="27" />
+              <folding>
+                <element signature="e#51#75#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Makefile" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/emulate/Makefile">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="18">
+              <caret line="1" column="66" selection-start-line="1" selection-start-column="66" selection-end-line="1" selection-end-column="66" />
               <folding />
             </state>
           </provider>
@@ -79,18 +112,6 @@
               <caret line="5" column="2" selection-start-line="5" selection-start-column="2" selection-end-line="5" selection-end-column="2" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="instructions.h" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/emulate/instructions.h">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="342">
-              <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-              <folding>
-                <element signature="e#51#75#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -115,14 +136,14 @@
         <option value="$PROJECT_DIR$/src/emulate/getCodes.h" />
         <option value="$PROJECT_DIR$/src/emulate/getCodes.c" />
         <option value="$PROJECT_DIR$/src/emulate/utilities.h" />
-        <option value="$PROJECT_DIR$/src/emulate/shifter.c" />
-        <option value="$PROJECT_DIR$/src/emulate/Makefile" />
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/src/emulate/utilities.c" />
         <option value="$PROJECT_DIR$/src/emulate/emulate.c" />
         <option value="$PROJECT_DIR$/src/emulate/instructionCycle.c" />
-        <option value="$PROJECT_DIR$/src/emulate/instructions.h" />
+        <option value="$PROJECT_DIR$/src/emulate/Makefile" />
         <option value="$PROJECT_DIR$/src/emulate/definitions.h" />
+        <option value="$PROJECT_DIR$/src/emulate/shifter.c" />
+        <option value="$PROJECT_DIR$/src/emulate/instructions.h" />
         <option value="$PROJECT_DIR$/src/emulate/instructions.c" />
       </list>
     </option>
@@ -133,6 +154,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds">
     <option name="x" value="65" />
     <option name="y" value="-1084" />
@@ -498,7 +520,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="3" />
+      <option name="time" value="4" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="CMakeRunConfiguration">
@@ -767,21 +789,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/emulate/Makefile">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="1" column="58" selection-start-line="1" selection-start-column="58" selection-end-line="1" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/emulate/shifter.c">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="326">
-          <caret line="71" column="10" selection-start-line="71" selection-start-column="10" selection-end-line="71" selection-end-column="10" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate/utilities.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="570">
@@ -800,6 +807,14 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/emulate/Makefile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="18">
+          <caret line="1" column="66" selection-start-line="1" selection-start-column="66" selection-end-line="1" selection-end-column="66" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate/emulate.c">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
@@ -808,30 +823,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/emulate/instructions.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="342">
-          <caret line="19" column="0" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
-          <folding>
-            <element signature="e#51#75#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate/definitions.h">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="450">
-          <caret line="118" column="59" selection-start-line="118" selection-start-column="59" selection-end-line="118" selection-end-column="59" />
+        <state relative-caret-position="534">
+          <caret line="79" column="20" selection-start-line="79" selection-start-column="20" selection-end-line="79" selection-end-column="20" />
           <folding>
             <element signature="e#132#151#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/emulate/shifter.c">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1278">
+          <caret line="71" column="0" selection-start-line="71" selection-start-column="0" selection-end-line="71" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/emulate/instructions.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="17" column="27" selection-start-line="17" selection-start-column="27" selection-end-line="17" selection-end-column="27" />
+          <folding>
+            <element signature="e#51#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/emulate/instructions.c">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="232" column="22" selection-start-line="232" selection-start-column="22" selection-end-line="232" selection-end-column="22" />
+        <state relative-caret-position="-366">
+          <caret line="185" column="0" selection-start-line="185" selection-start-column="0" selection-end-line="185" selection-end-column="0" />
           <folding>
             <element signature="e#0#25#0" expanded="true" />
           </folding>

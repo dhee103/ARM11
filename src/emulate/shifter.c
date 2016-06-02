@@ -69,38 +69,6 @@ shift_out ror(int shift_value, uint32_t Rm_value) {
     return result;
 }
 
-shift_out shifter(uint8_t shift, int Rm, state *st) {
-    uint32_t Rm_value = st->reg[Rm];
-    int types = (int)((check_shift_type & shift) >> 1);
-    int shift_value;
-    shift_out result;
-    if(0 == (shift & check_bit4)) {
-        /*read the shift value from bit 7 to 11*/
-        shift_value = (int)((shift & check_shift_value) >> 3);
-    }
-    else {
-        /*read the value from the Rs register*/
-        int Rs = (int)((shift & check_Rs) >> 4);
-        shift_value = st->reg[Rs];
-    }
-
-    switch(types) {
-        case 0 :
-            result = lsl(shift_value, Rm_value);
-            break;
-        case 1 :
-            result = lsr(shift_value, Rm_value);
-            break;
-        case 2 :
-            result = asr(shift_value, Rm_value);
-            break;
-        case 3 :
-            result = ror(shift_value, Rm_value);
-            break;
-    }
-    return result;
-}
-
 uint32_t immValue(int rotate_value, uint32_t immV) {
     uint32_t result;
     int num_rotate = 2 * rotate_value;
