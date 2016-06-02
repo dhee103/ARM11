@@ -14,6 +14,8 @@ void setNZ(state *st, uint32_t result);
 void setC(state *st,int carry_out);
 void setCadd(state *st,uint32_t first_value,uint32_t second_value);
 void setCsub(state *st,uint32_t first_value,uint32_t second_value);
+shift_out ror(int shift_value, uint32_t Rm_value);
+uint32_t immValue(int rotate_value, uint32_t immV);
 
 shift_out shift(state *st);
 void addToMem(state *st, uint32_t address, uint32_t value);

@@ -9,8 +9,6 @@ set(EMULATE_SOURCE_FILES
     src/emulate/emulate.c
     src/emulate/instructionCycle.c
     src/emulate/utilities.c
-    src/emulate/setRegs.c
-    src/emulate/shifter.c
         )
 # eventually just have emulate.c in source file
 

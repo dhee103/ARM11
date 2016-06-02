@@ -33,9 +33,8 @@
 #define SDT_BIT 26
 #define OP_REG_BIT 4
 
-/* Bit positions for extracting multiple bits at a time using the closed open
- * interval
- */
+/* Bit positions for extracting multiple bits at a time using the half open
+ * interval [begin,end) */
 #define MULT_BIT_START 4
 #define MULT_BIT_END 8
 #define COND_START 28
@@ -72,15 +71,12 @@
 #define OFFSET_BITS_MASK 0x00FFFFFF
 #define NOT_OFFSET_BITS_MASK 0xFF000000
 #define BRANCH_SHIFT 2
-#define check_bit31 0x80000000
-#define check_bit0 0x00000001
-#define check_bit4 0x01
-#define MASK_SHIFT_TYPE 0x06
-#define MASK_SHIFT_VALUE 0xF8
-#define MASK_RS 0xf0
+#define MASK_BIT_31 0x80000000
+#define MASK_BIT_0 0x00000001
 #define MASK_IMM 0x000000FF
 #define MASK_ROT 0x00000F00
 #define SHIFT_ROT 8
+
 
 /* Enum named COND for instruction condition */
 typedef enum {
@@ -127,8 +123,6 @@ typedef enum {
 /* information held by the decoded instruction */
 typedef struct decoded_instruction {
 	OPCODE opcode;
-	SHIFT shift;
-	uint32_t shiftAmount;
 	int isImm;
 	int isSet;
 	int isAcc;
@@ -143,6 +137,7 @@ typedef struct decoded_instruction {
     uint32_t operand2;
 } decoded_instr;
 
+/* struct for cpsr flag */
 typedef struct cpsrFlag {
 	int nbit;
 	int zbit;
@@ -150,6 +145,9 @@ typedef struct cpsrFlag {
 	int vbit;
 } cpsr;
 
+/* struct for the state of the processor
+ * It contains a pointers to decoded instructions, 32 bit registers, 8 bit
+ * memory and to the cpsr flag */
 typedef struct state {
 	decoded_instr *decoded;
 	uint32_t *reg;
@@ -157,6 +155,8 @@ typedef struct state {
     cpsr *cpsrFlag;
 } state;
 
+/* struct for the output from a shifter
+ * Enables us to use one function to return both the data and carry bit */
 typedef struct shift_output {
 	uint32_t data;
 	int carry;

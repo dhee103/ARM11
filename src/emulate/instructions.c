@@ -1,6 +1,5 @@
 #include "instructions.h"
 #include "utilities.h"
-#include "shifter.h"
 
 #include <stdio.h>
 #include <assert.h>
@@ -14,8 +13,8 @@ void dataProcessing(state *st) {
     uint32_t second_operand;
 
 /*  Calculates the correct operand2 value based on whether the instruction is
- * immediate
- */
+ * immediate */
+
     if (decoded->isImm) {
         uint32_t imm = (decoded->operand2) & MASK_IMM;
         int rotV = (int) (((decoded->operand2) & MASK_ROT) >> SHIFT_ROT);
@@ -61,8 +60,7 @@ void dataProcessing(state *st) {
     }
 
 /*  If the flags are supposed to be set, the appropriate helper functions are
- *  called to set the appropriate flags
- */
+ *  called to set the appropriate flags */
     if (decoded->isSet) {
         switch (decoded->opcode) {
             case AND :
@@ -117,8 +115,7 @@ void multiply(state *st) {
  *  displayed.
  *  The function then loads or stores as determined by the isLoad bit
  *  Finally in the case of post indexing the contents of the base register
- *  are changed by the offset after it has been indexed
- */
+ *  are changed by the offset after it has been indexed */
 void singleDataTransfer(state *st) {
     decoded_instr *decoded = st->decoded;
 
@@ -174,8 +171,7 @@ void singleDataTransfer(state *st) {
  * The offset is then added to the PC
  * Due to the side effects of the pipeline we added 8 bytes
  * Additionally due to the way we designed our pipeline we also had go back
- * 4 bytes to get to the correct instruction
- */
+ * 4 bytes to get to the correct instruction */
 void branch(state *st) {
     int32_t offset = st->decoded->offset;
     offset = signExt(offset << BRANCH_SHIFT);
@@ -193,15 +189,13 @@ void setNZ(state *st, uint32_t result) {
 }
 
 /* helper function which sets C flag when appropriate
- * called for AND, EOR, ORR, TEQ, TST and MOV
- */
+ * called for AND, EOR, ORR, TEQ, TST and MOV */
 void setC(state *st, int carry_out) {
     st->cpsrFlag->cbit = (uint8_t) carry_out;
 }
 
 /* helper function which sets C flag when appropriate
- * called for ADD only
- */
+ * called for ADD only */
 void setCadd(state *st, uint32_t first_value, uint32_t second_value) {
     st->cpsrFlag->cbit = 0;
     if (first_value + second_value > MAX_32_BIT_NUM) {
@@ -210,8 +204,7 @@ void setCadd(state *st, uint32_t first_value, uint32_t second_value) {
 }
 
 /* helper function which sets C flag when appropriate
- * called for SUB, CMP and RSB
- */
+ * called for SUB, CMP and RSB */
 void setCsub(state *st, uint32_t first_value, uint32_t second_value) {
 //    TODO: do by adding second operand as 2's complement
     st->cpsrFlag->cbit = 0;
@@ -220,9 +213,32 @@ void setCsub(state *st, uint32_t first_value, uint32_t second_value) {
     }
 }
 
+/* helper function which returns the immediate value */
+uint32_t immValue(int rotate_value, uint32_t immV) {
+    uint32_t result;
+    int num_rotate = 2 * rotate_value;
+    result = ror(num_rotate, immV).data;
+    return result;
+}
+
+/* helper function which performs a rotate right and returns a shift_out */
+shift_out ror(int shift_value, uint32_t Rm_value) {
+    shift_out result;
+    uint32_t temp;
+    result.data = Rm_value;
+    while(shift_value > 0) {
+        temp = MASK_BIT_0 & result.data;
+        temp = temp << 31;
+        result.data = result.data >> 1;
+        result.data = temp | result.data;
+        shift_value--;
+    }
+    result.carry = (int)((result.data & MASK_BIT_31) >> 31);
+    return result;
+}
+
 /* shifter which given a state returns a shift_out which contains the shift
- * offset and the shift carry
- */
+ * offset and the shift carry */
 shift_out shift(state *st) {
     int carryBit = 0;
     uint32_t offset = 0;
@@ -274,8 +290,7 @@ shift_out shift(state *st) {
 }
 
 /* Gives the appropriate message depending on whether the given address is a
- * GPIO address
- */
+ * GPIO address */
 int isGpioAddress(uint32_t address) {
     switch (address) {
         case PIN_OFF:
@@ -317,8 +332,7 @@ uint32_t getFromMem(state *st, uint32_t address) {
 }
 
 /* helper function for branch that extends the signed offset to a signed 32
- * bit value
- */
+ * bit value */
 int32_t signExt(int32_t offset) {
     int32_t value = (OFFSET_BITS_MASK & offset);
     if (OFFSET_SIGN_MASK & offset) {

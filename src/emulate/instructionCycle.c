@@ -2,8 +2,7 @@
 #include "utilities.h"
 
 /*  The following functions are used to decode the different types of
- *  instructions
- */
+ *  instructions */
 
 void decode_data_process(state *st) {
     decoded_instr *decoded = st->decoded;

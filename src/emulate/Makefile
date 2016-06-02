@@ -7,15 +7,13 @@ CFLAGS  = -Wall -g -D_POSIX_SOURCE -D_BSD_SOURCE -std=c99 -Werror -pedantic
 
 all: emulate
 
-emulate: emulate.o instructionCycle.o instructions.o shifter.o utilities.o
+emulate: emulate.o instructionCycle.o instructions.o utilities.o
 
 emulate.o: utilities.h
 
 instructionCycle.o: instructionCycle.h utilities.h
 
-instructions.o: instructions.h shifter.h
-
-shifter.o: shifter.h
+instructions.o: instructions.h
 
 utilities.o: utilities.h
 

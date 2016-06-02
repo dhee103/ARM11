@@ -14,6 +14,6 @@ uint32_t getInstruction(state *st);
 int isTerminate(state *st);
 int checkCond(state *st);
 void selectInstruction(state *st);
-uint32_t reverse(uint32_t bits);
+
 
 #endif
