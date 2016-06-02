@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "assembleUint.h"
+/*for testing */
 void printBits(uint32_t x) {
   int i;
   uint32_t mask = 1 << 31;
@@ -17,7 +18,7 @@ void printBits(uint32_t x) {
   }
     printf("\n");
   }
-
+/*helper function to convert a 32 bit number from big endian to little endian*/
 uint32_t bigToLitteEndian(uint32_t num) {
 
   return num >> 24
@@ -26,55 +27,56 @@ uint32_t bigToLitteEndian(uint32_t num) {
        | num << 24;
 }
 
-
+/*Function which gets the details of the instruction's opcode*/
 opDetails getOpcodeDetails(char * mnemonic) {
     opDetails result;
-    if(0 == strcmp(mnemonic,"and")) {
+    if(!strcmp(mnemonic,"and")) {
         result.opcode = AND;
         result.opcode_binary = B_0;
-    } else if(0 == strcmp(mnemonic,"eor")) {
+    } else if(!strcmp(mnemonic,"eor")) {
         result.opcode = EOR;
         result.opcode_binary = B_1;
-    } else if(0 == strcmp(mnemonic,"sub")) {
+    } else if(!strcmp(mnemonic,"sub")) {
         result.opcode = SUB;
         result.opcode_binary = B_2;
-    } else if(0 == strcmp(mnemonic,"rsb")) {
+    } else if(!strcmp(mnemonic,"rsb")) {
         result.opcode = RSB;
         result.opcode_binary = B_3;
-    } else if(0 == strcmp(mnemonic,"add")) {
+    } else if(!strcmp(mnemonic,"add")) {
         result.opcode = ADD;
         result.opcode_binary = B_4;
-    } else if(0 == strcmp(mnemonic,"orr")) {
+    } else if(!strcmp(mnemonic,"orr")) {
         result.opcode = ORR;
         result.opcode_binary = B_C;
-    } else if(0 == strcmp(mnemonic,"mov")) {
+    } else if(!strcmp(mnemonic,"mov")) {
         result.opcode = MOV;
         result.opcode_binary = B_D;
-    } else if(0 == strcmp(mnemonic,"tst")) {
+    } else if(!strcmp(mnemonic,"tst")) {
         result.opcode = TST;
         result.opcode_binary = B_8;
-    } else if(0 == strcmp(mnemonic,"teq")) {
+    } else if(!strcmp(mnemonic,"teq")) {
         result.opcode = TEQ;
         result.opcode_binary = B_9;
-    } else if(0 == strcmp(mnemonic,"cmp")) {
+    } else if(!strcmp(mnemonic,"cmp")) {
         result.opcode = CMP;
         result.opcode_binary = B_A;
     }
     return result;
 }
 
+/* converts an number larger than 8 bits to a number less than or equal to 8 bits with a rotation */
 uint32_t convertOP2(uint32_t op2_32bit) {
     uint32_t rot;
     uint32_t result = op2_32bit;
     int condition = 1;
     int rotate_value = 0;
-    while(1 == condition) {
+    while(condition) {
         int bit0 = (int)(op2_32bit & B_1);
         int bit1 = (int)((op2_32bit & B_2)>>1);
-        if((1 == bit0) || (1 == bit1)) {
+        if((bit0) || (bit1)) {
             condition = 0;
         }
-        if(1 == condition) {
+        if(condition) {
             /*shift value = n -> shift 2n times*/
             op2_32bit = op2_32bit >> 2;
             rotate_value++;
@@ -88,7 +90,7 @@ uint32_t convertOP2(uint32_t op2_32bit) {
     return result;
 }
 
-
+/* converts a data processing instruction into binary */
 uint32_t assembler_dataProcessing(instruct *ins) {
     uint32_t result = B_0;
     uint32_t cond = COND_dataProcessing;
@@ -135,6 +137,7 @@ uint32_t assembler_dataProcessing(instruct *ins) {
     return result;
 }
 
+/* converts a multiply instruction into binary */
 uint32_t assembler_multiply(instruct *ins) {
     uint32_t Rd;
     uint32_t Rs;
@@ -164,7 +167,7 @@ uint32_t assembler_multiply(instruct *ins) {
     return result;
 }
 
-
+/* converts a special case instruction into binary */
 uint32_t assembler_special(instruct *ins) {
     uint32_t result =B_0;
 
@@ -194,6 +197,7 @@ uint32_t assembler_special(instruct *ins) {
     return result;
 }
 
+/*for testing */
 int main(void) {
     /*op2_state oper2 = getOP2Details("#50331648");
     uint32_t oper2_data = oper2.data;
