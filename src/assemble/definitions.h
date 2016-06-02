@@ -3,7 +3,7 @@
 
 #include "fileUtils.h"
 
-#define MAX_LINE_LENGTH 512
+#define MAX_LINE_LENGTH 512 //512 to allow for 511 chars + /0
 #define condMask 28
 #define IMask 25
 #define opcodeMask 21

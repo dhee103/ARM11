@@ -6,10 +6,11 @@
 
 FILE * loadIn(int argc, char **argv);
 
-typedef struct sourceData{
+typedef struct sourceData{ //idea for source data sctruct, allowing
+// for access of files, and useful metadata
     char *buffer;
-    FILE *file;         //contains the input assembly file, and populates the numlines; during the first loop, populate
-    // values/labels
+    FILE *file;         //contains the input assembly file, and populates the
+    // numlines; during the first loop, populates values and labels
     uint32_t *values;
     uint32_t *labels;
     int numLines;
@@ -21,7 +22,7 @@ typedef struct sourceData{
 
 source * loadSource(int argc, char **argv);
 
-typedef struct instruction {
+typedef struct instruction {    //using anans (first) instruction struct
     char *mnemonic;
     char *rd;
     char *rn;

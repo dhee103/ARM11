@@ -16,7 +16,8 @@ source * loadSource(int argc, char **argv){
     return src;
 }
 
-FILE * loadIn(int argc, char **argv){
+FILE * loadIn(int argc, char **argv){ //original design for using only a file
+// rather than a struct, now reused to populate the struct
     printf("%d \n", argc);
     if(argc!=3){fprintf(stderr,"Insufficient arguments.\n"); return EXIT_FAILURE;}
     FILE *source;                   //source file is opened

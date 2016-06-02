@@ -11,7 +11,7 @@ set(EMULATE_SOURCE_FILES
     src/emulate/utilities.c
     src/emulate/setRegs.c
     src/emulate/shifter.c
-        )
+        src/emulate/gpioLed.c src/emulate/gpioLed.h)
 # eventually just have emulate.c in source file
 
 add_executable(arm11_12_emulate ${EMULATE_SOURCE_FILES})

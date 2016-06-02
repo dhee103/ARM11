@@ -8,6 +8,8 @@
     <libraryRoots />
     <excludeRoots>
       <file path="$PROJECT_DIR$/out" />
+      <file path="$PROJECT_DIR$/src/test" />
+      <file path="$PROJECT_DIR$/testcases" />
     </excludeRoots>
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">

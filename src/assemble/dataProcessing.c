@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "definitions.h"
+//directly using anans (original design)
 
 uint32_t getRegAddress(char *reg) {
 if (0 == strcmp(reg,"r0")){
