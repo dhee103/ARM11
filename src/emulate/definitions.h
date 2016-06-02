@@ -116,6 +116,15 @@ typedef enum {
 	ROR = 3
 } SHIFT;
 
+/* Enum named GPIO for the different cases for GPIO pins */
+typedef enum {
+    PIN_OFF = 0x20200028,
+    PIN_ON = 0x2020001C,
+    PIN_0_9 = 0x20200000,
+    PIN_10_19 = 0x20200004,
+    PIN_20_29 = 0x20200008,
+} GPIO;
+
 /* information held by the decoded instruction */
 typedef struct decoded_instruction {
 	OPCODE opcode;

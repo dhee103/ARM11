@@ -7,7 +7,7 @@
 
 void dataProcessing(state *st) {
     decoded_instr *decoded = st->decoded;
-    uint32_t result;
+    uint32_t result = 0;
     uint32_t second_operand;
     int carry_out = 0;
 
@@ -64,7 +64,6 @@ void dataProcessing(state *st) {
             case MOV :
                 setC(st, carry_out);
                 break;
-
             case SUB :
             case CMP :
                 setCsub(st, second_operand, st->reg[decoded->rn]);
@@ -75,7 +74,6 @@ void dataProcessing(state *st) {
             case ADD :
                 setCadd(st, st->reg[decoded->rn], second_operand);
                 break;
-
         }
         setNZ(st, result);
     }
@@ -220,19 +218,19 @@ void singleDataTransfer(state *st) {
 
 int isGpioAddress(uint32_t address) {
     switch (address) {
-        case 0x20200028:
+        case PIN_OFF:
             printf("PIN OFF\n");
             break;
-        case 0x2020001C:
+        case PIN_ON:
             printf("PIN ON\n");
             break;
-        case 0x20200000:
+        case PIN_0_9:
             printf("One GPIO pin from 0 to 9 has been accessed\n");
             break;
-        case 0x20200004:
+        case PIN_10_19:
             printf("One GPIO pin from 10 to 19 has been accessed\n");
             break;
-        case 0x20200008:
+        case PIN_20_29:
             printf("One GPIO pin from 20 to 29 has been accessed\n");
             break;
         default:

@@ -17,7 +17,6 @@ void setCsub(state *st,uint32_t first_value,uint32_t second_value);
 
 void addToMem(state *st, uint32_t address, uint32_t value);
 uint32_t getFromMem(state *st, uint32_t address);
-uint32_t shifter_register(state *st, uint32_t offset);
 shift_out shift(state *st);
 
 int isGpioAddress(uint32_t address);
