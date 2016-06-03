@@ -17,22 +17,6 @@
 #define COND_dataProcessing 0x0000000E
 #define COND_multiply 0x0000000E
 #define shiftMask_special 7
-#define B_0 0x00000000
-#define B_1 0x00000001
-#define B_2 0x00000002
-#define B_3 0x00000003
-#define B_4 0x00000004
-#define B_5 0x00000005
-#define B_6 0x00000006
-#define B_7 0x00000007
-#define B_8 0x00000008
-#define B_9 0x00000009
-#define B_A 0x0000000A
-#define B_B 0x0000000B
-#define B_C 0x0000000C
-#define B_D 0x0000000D
-#define B_E 0x0000000E
-#define B_F 0x0000000F
 
 typedef struct instruction {
     char *mnemonic;
@@ -41,8 +25,7 @@ typedef struct instruction {
     uint32_t rs;
     uint32_t rm;
     uint32_t operand2;
-    uint32_t expression;
-    int Imm;
+    uint32_t Imm;
 } instruct;
 
 typedef struct operand2_state {
@@ -63,9 +46,9 @@ typedef enum {
     MOV = 13
 } OPCODE;
 
-typedef struct opcodeDetails {
+/*typedef struct opcodeDetails {
     OPCODE opcode;
     uint32_t opcode_binary;
-} opDetails;
+} opDetails;*/
 
 #endif

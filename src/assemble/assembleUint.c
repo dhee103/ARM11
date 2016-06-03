@@ -8,7 +8,7 @@ void printBits(uint32_t x) {
   int i;
   uint32_t mask = 1 << 31;
   for(i=0; i<32; ++i) {
-    if((x & mask) == 0){
+    if(!(x & mask)){
       printf("0");
     }
     else {
@@ -27,52 +27,46 @@ uint32_t bigToLitteEndian(uint32_t num) {
        | num << 24;
 }
 
-/*Function which gets the details of the instruction's opcode*/
-opDetails getOpcodeDetails(char * mnemonic) {
-    opDetails result;
+/*Return the corresponding enum of the instruction*/
+OPCODE getOpcodeDetails(char * mnemonic) {
+    OPCODE result;
     if(!strcmp(mnemonic,"and")) {
-        result.opcode = AND;
-        result.opcode_binary = B_0;
+        result = AND;
     } else if(!strcmp(mnemonic,"eor")) {
-        result.opcode = EOR;
-        result.opcode_binary = B_1;
+        result = EOR;
     } else if(!strcmp(mnemonic,"sub")) {
-        result.opcode = SUB;
-        result.opcode_binary = B_2;
+        result = SUB;
     } else if(!strcmp(mnemonic,"rsb")) {
-        result.opcode = RSB;
-        result.opcode_binary = B_3;
+        result = RSB;
     } else if(!strcmp(mnemonic,"add")) {
-        result.opcode = ADD;
-        result.opcode_binary = B_4;
+        result = ADD;
     } else if(!strcmp(mnemonic,"orr")) {
-        result.opcode = ORR;
-        result.opcode_binary = B_C;
+        result = ORR;
     } else if(!strcmp(mnemonic,"mov")) {
-        result.opcode = MOV;
-        result.opcode_binary = B_D;
+        result = MOV;
     } else if(!strcmp(mnemonic,"tst")) {
-        result.opcode = TST;
-        result.opcode_binary = B_8;
+        result = TST;
     } else if(!strcmp(mnemonic,"teq")) {
-        result.opcode = TEQ;
-        result.opcode_binary = B_9;
+        result = TEQ;
     } else if(!strcmp(mnemonic,"cmp")) {
-        result.opcode = CMP;
-        result.opcode_binary = B_A;
+        result = CMP;
+
     }
     return result;
 }
 
-/* converts an number larger than 8 bits to a number less than or equal to 8 bits with a rotation */
+/* converts an number larger than 8 bits to a number less than
+or equal to 8 bits with a rotation */
 uint32_t convertOP2(uint32_t op2_32bit) {
     uint32_t rot;
     uint32_t result = op2_32bit;
     int condition = 1;
     int rotate_value = 0;
     while(condition) {
-        int bit0 = (int)(op2_32bit & B_1);
-        int bit1 = (int)((op2_32bit & B_2)>>1);
+        /*check bit0 and bit1*/
+        int bit0 = (op2_32bit & 1);
+        int bit1 = ((op2_32bit & 2)>>1);
+        /*stop the while loop either bit0 or bit1 is 1*/
         if((bit0) || (bit1)) {
             condition = 0;
         }
@@ -83,8 +77,9 @@ uint32_t convertOP2(uint32_t op2_32bit) {
         }
     }
     if(0 != rotate_value) {
-        /*rotate backward (1 round is 16)*/
+        /*count rotate backward (1 round is 16)*/
         rot = (uint32_t)(16 - rotate_value);
+        /*rot is the shift value which starts at bit 8*/
         result = op2_32bit | (rot << 8);
     }
     return result;
@@ -92,69 +87,91 @@ uint32_t convertOP2(uint32_t op2_32bit) {
 
 /* converts a data processing instruction into binary */
 uint32_t assembler_dataProcessing(instruct *ins) {
-    uint32_t result = B_0;
+    uint32_t result;
+    /*initiating values to 0*/
+    uint32_t S = 0;
+    uint32_t Rn = 0;
+    uint32_t Rd = 0;
+    /*all data processing instructions have cond = 0x0000000E*/
     uint32_t cond = COND_dataProcessing;
+    /*receive I bit from the loader function*/
     uint32_t I = ins->Imm;
-    uint32_t S = B_0;
-    uint32_t Rn = B_0;
-    uint32_t Rd = B_0;
+    /*receive Operand2 from the loader function*/
     uint32_t Operand2 = ins->operand2;
-    opDetails ins_op = getOpcodeDetails(ins->mnemonic);
-    uint32_t opcode = ins_op.opcode_binary;
-    switch(ins_op.opcode) {
+    /*get an enum of the instruction*/
+    OPCODE ins_op = getOpcodeDetails(ins->mnemonic);
+    uint32_t opcode = ins_op;
+    switch(ins_op) {
                 case AND :
                 case EOR :
                 case ORR :
                 case SUB :
                 case RSB :
                 case ADD :
+                    /*These instructions set Rd and Rn*/
                     Rd = ins->rd;
                     Rn = ins->rn;
                     break;
                 case TST :
                 case TEQ :
                 case CMP :
-                    S = B_1;
+                    /*These instructions set S bit to be 1
+                    and set Rn from corresponding input rn*/
+                    S = 1;
                     Rn = ins->rn;
                     break;
                 case MOV :
+                    /*mov instruction uses just 1 register(Rd)*/
                     Rd = ins->rd;
                     break;
 
     }
-    /*rotate value that is bigger than 8 bit*/
+    /*rotate value that is bigger than 8 bit to be
+    an 8 bit with a shift value*/
     if(Operand2 > 0x000000FF) {
         Operand2 = convertOP2(Operand2);
     }
+    /*each components are in the different bit positions in
+    the binary code so I shift them to the start positions of
+    each fields then combine them together by logical OR operation
+    to get the binary instruction*/
     cond = cond << condMask_DP;
     I = I << IMask_DP;
     opcode = opcode << opcodeMask_DP;
     S = S << SMask_DP;
     Rn = Rn << RnMask_DP;
     Rd = Rd << RdMask_DP;
-    result = result | cond | I | opcode | S | Rn | Rd | Operand2;
+    result = cond | I | opcode | S | Rn | Rd | Operand2;
+    /*change Endian*/
     result = bigToLitteEndian(result);
     return result;
 }
 
 /* converts a multiply instruction into binary */
 uint32_t assembler_multiply(instruct *ins) {
+    uint32_t result;
     uint32_t Rd;
     uint32_t Rs;
     uint32_t Rm;
-    uint32_t Rn = B_0;
-    uint32_t result = B_0;
+    /*initiating values to 0*/
+    uint32_t Rn = 0;
+    uint32_t A = 0;
+    uint32_t S = 0;
+    /*multiply instructions have cond = 0x0000000E*/
     uint32_t cond = COND_multiply;
-    uint32_t A = B_0;
-    uint32_t S = B_0;
-    uint32_t bit4_7 = B_9;
-    if(0 == strcmp(ins->mnemonic,"mla")) {
-        A = B_1;
+    /*bit 4-7 are the constant 1001*/
+    uint32_t bit4_7 = 9;
+    /*mla uses additional register Rn
+    and sets A bit to be 1*/
+    if(!strcmp(ins->mnemonic,"mla")) {
+        A = 1;
         Rn = ins->rn;
     }
     Rd = ins->rd;
     Rs = ins->rs;
     Rm = ins->rm;
+    /*shift all fields to there corresponding
+    starting positions then combine them by logical OR*/
     cond = cond << condMask_MUL;
     A = A << AMask_MUL;
     S = S << SMask_MUL;
@@ -162,36 +179,35 @@ uint32_t assembler_multiply(instruct *ins) {
     Rd = Rd << RdMask_MUL;
     bit4_7 = bit4_7 << Mask4_7_MUL;
     Rs = Rs << RsMask_MUL;
-    result = result | cond | A | S | Rn | Rd | bit4_7 | Rs | Rm;
+    result = cond | A | S | Rn | Rd | bit4_7 | Rs | Rm;
+    /*change the Endian*/
     result = bigToLitteEndian(result);
     return result;
 }
 
 /* converts a special case instruction into binary */
 uint32_t assembler_special(instruct *ins) {
-    uint32_t result =B_0;
+    uint32_t result;
 
-    if(0 == strcmp(ins->mnemonic,"lsl")) {
+    if(!strcmp(ins->mnemonic,"lsl")) {
+        /*lsl Rn, <#expression> is a mov Rn,Rn, lsl <#expression>
+        so Imm is 0, operand2 is the register rd with the shift value
+        from the expression*/
         uint32_t shift_value;
         uint32_t Operand2;
-        /*lsl is a mov so cond = COND_dataProcessing*/
-        uint32_t cond = COND_dataProcessing;
-        /*from mov*/
-        uint32_t S = B_0;
-        uint32_t Rd = B_0;
-        opDetails ins_op = getOpcodeDetails("mov");
-        uint32_t opcode = ins_op.opcode_binary;
-        shift_value = ins->expression;
-        Rd = ins->rd;
-        Operand2 = Rd;
-        cond = cond << condMask_DP;
-        opcode = opcode << opcodeMask_DP;
-        S = S << SMask_DP;
-        Rd = Rd << RdMask_DP;
+        /*got expression from the loader function as operand2
+        this value is the shift value*/
+        shift_value = ins->operand2;
+        Operand2 = ins->rd;
         shift_value = shift_value << shiftMask_special;
+        /*Operand2 combine a register address and the shift value*/
         Operand2 = Operand2 | shift_value;
-        result = result | cond | opcode | S | Rd | Operand2;
-        result = bigToLitteEndian(result);
+        ins->Imm = 0;
+        /*set operand2 to the new Operand2 for mov instruction*/
+        ins->operand2 = Operand2;
+        /*we process lsl as a mov instruction*/
+        ins->mnemonic = "mov";
+        result = assembler_dataProcessing(ins);
     }
 
     return result;
@@ -215,9 +231,8 @@ int main(void) {
 
 
     instr->mnemonic = "mov";
-    instr->expression = 0;
     instr->rd = 1;
-    instr->operand2 = 1;
+    instr->operand2 = 255;
     instr->rm = 0;
     instr->rs = 0;
     instr->rn = 0;
@@ -225,20 +240,18 @@ int main(void) {
     out_assembler = assembler_dataProcessing(instr);
     printBits(out_assembler);
 
-    instr2->mnemonic = "mov";
-    instr2->expression = 0;
-    instr2->rd = 2;
-    instr2->operand2 = 23;
-    instr2->rm = 0;
+    instr2->mnemonic = "lsl";
+    instr2->rd = 1;
+    instr2->operand2 = 31;
+    /*instr2->rm = 0;
     instr2->rs = 0;
     instr2->rn = 1;
-    instr2->Imm = 1;
-    out_assembler2 = assembler_dataProcessing(instr2);
+    instr2->Imm = 1;*/
+    out_assembler2 = assembler_special(instr2);
     printBits(out_assembler2);
 
 
     instr3->mnemonic = "tst";
-    instr3->expression = 0;
     instr3->rd = 2;
     instr3->operand2 = 1;
     instr3->rm = 1;
@@ -249,7 +262,6 @@ int main(void) {
     printBits(out_assembler3);
 
     instr4->mnemonic = "andeq";
-    instr4->expression = 0;
     instr4->rd = 4;
     instr4->operand2 = 205;
     instr4->rm = 1;
