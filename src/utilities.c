@@ -320,6 +320,7 @@ void decode_single_data_transfer(STATE *state, uint32_t bits) {
   state -> decoded -> isUp = indexTobit(bits, 23);
   state -> decoded -> isPre = indexTobit(bits, 24);
   state -> decoded -> isImm = indexTobit(bits, 25);
+
 }
 
 void decode_branch(STATE *state, uint32_t bits) {
