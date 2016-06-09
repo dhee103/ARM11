@@ -20,6 +20,7 @@
 
 typedef struct instruction {
     char *mnemonic;
+    char *shiftName;
     uint32_t rd;
     uint32_t rn;
     uint32_t rs;

@@ -88,6 +88,7 @@ uint32_t convertOP2(uint32_t op2_32bit) {
 /* converts a data processing instruction into binary */
 uint32_t assembler_dataProcessing(instruct *ins) {
     uint32_t result;
+    uint32_t Operand2;
     /*initiating values to 0*/
     uint32_t S = 0;
     uint32_t Rn = 0;
@@ -96,8 +97,6 @@ uint32_t assembler_dataProcessing(instruct *ins) {
     uint32_t cond = COND_dataProcessing;
     /*receive I bit from the loader function*/
     uint32_t I = ins->Imm;
-    /*receive Operand2 from the loader function*/
-    uint32_t Operand2 = ins->operand2;
     /*get an enum of the instruction*/
     OPCODE ins_op = getOpcodeDetails(ins->mnemonic);
     uint32_t opcode = ins_op;
@@ -126,10 +125,34 @@ uint32_t assembler_dataProcessing(instruct *ins) {
                     break;
 
     }
-    /*rotate value that is bigger than 8 bit to be
-    an 8 bit with a shift value*/
-    if(Operand2 > 0x000000FF) {
+
+    if(NULL != ins->shiftName) {
+        uint32_t shiftType;
+        uint32_t Rs = ins->rs;
+        uint32_t Rm = ins->rm;
+        uint32_t bit_4 = 1<<4;
+        printf("not null \n");
+        if(!strcmp(ins->shiftName, "lsl")) {
+            shiftType = 0;
+        } else if(!strcmp(ins->shiftName, "lsr")) {
+            shiftType = 1;
+        } else if(!strcmp(ins->shiftName, "asr")) {
+            shiftType = 2;
+        } else if(!strcmp(ins->shiftName, "ror")) {
+            shiftType = 3;
+        }
+        Rs = Rs << 8;
+        shiftType = shiftType << 5;
+        Operand2 = shiftType | Rs | bit_4 | Rm;
+    } else {
+        printf("null \n");
+        /*receive Operand2 from the loader function*/
+        Operand2 = ins->operand2;
+        /*rotate value that is bigger than 8 bit to be
+        an 8 bit with a shift value*/
+        if(Operand2 > 0x000000FF) {
         Operand2 = convertOP2(Operand2);
+        }
     }
     /*each components are in the different bit positions in
     the binary code so I shift them to the start positions of
@@ -232,7 +255,7 @@ int main(void) {
 
     instr->mnemonic = "mov";
     instr->rd = 1;
-    instr->operand2 = 255;
+    instr->operand2 = 4;
     instr->rm = 0;
     instr->rs = 0;
     instr->rn = 0;
@@ -240,24 +263,25 @@ int main(void) {
     out_assembler = assembler_dataProcessing(instr);
     printBits(out_assembler);
 
-    instr2->mnemonic = "lsl";
-    instr2->rd = 1;
-    instr2->operand2 = 31;
+    instr2->mnemonic = "mov";
+    instr2->rd = 2;
+    instr2->operand2 = 2;
     /*instr2->rm = 0;
     instr2->rs = 0;
-    instr2->rn = 1;
-    instr2->Imm = 1;*/
-    out_assembler2 = assembler_special(instr2);
+    instr2->rn = 1;*/
+    instr2->Imm = 1;
+    out_assembler2 = assembler_dataProcessing(instr2);
     printBits(out_assembler2);
 
 
-    instr3->mnemonic = "tst";
-    instr3->rd = 2;
-    instr3->operand2 = 1;
-    instr3->rm = 1;
+    instr3->mnemonic = "sub";
+    instr3->rd = 5;
+    /*instr3->operand2 = 1;*/
+    instr3->rm = 3;
     instr3->rs = 2;
-    instr3->rn = 1;
+    instr3->rn = 4;
     instr3->Imm = 0;
+    instr3->shiftName = "lsl";
     out_assembler3 = assembler_dataProcessing(instr3);
     printBits(out_assembler3);
 
