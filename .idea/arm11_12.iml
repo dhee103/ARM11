@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="CPP_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+<<<<<<< HEAD
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/instructionCycle.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/setRegs.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/instructions.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/definitions.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/setRegs.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/utilities.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/instructionCycle.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/instructions.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/emulate.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/shifter.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/utilities.c" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/emulate/shifter.c" isTestSource="false" />
+=======
+      <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
+>>>>>>> f1f6bb305c159bcd2c258dd4cbc79450eef0ba64
+      <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
+      <excludeFolder url="file://$MODULE_DIR$/out" />
+    </content>
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library">
+      <library name="Header Search Paths">
+        <CLASSES>
+          <root url="file:///usr/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+          <root url="file:///usr/local/include" />
+        </CLASSES>
+        <SOURCES>
+          <root url="file:///usr/include" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include-fixed" />
+          <root url="file:///usr/lib/gcc/x86_64-linux-gnu/4.8/include" />
+          <root url="file:///usr/local/include" />
+        </SOURCES>
+      </library>
+    </orderEntry>
+  </component>
+</module>
