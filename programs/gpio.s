@@ -10,7 +10,7 @@ ldr r3,=0x2020001C  ;set address
 loop:
 mov r1,#1
 lsl r1,#16          ;r1 is used to write to set and clear addresses
-str r1,[r0]         ;clear pin 16
+str r1,[r2]         ;clear pin 16
 
 mov r0,=0x1000
 loop1:
