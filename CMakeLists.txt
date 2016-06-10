@@ -9,7 +9,7 @@ set(EMULATE_SOURCE_FILES
     src/emulate/emulate.c
     src/emulate/instructionCycle.c
     src/emulate/utilities.c
-        )
+        src/assemble/run.h)
 # eventually just have emulate.c in source file
 
 add_executable(arm11_12_emulate ${EMULATE_SOURCE_FILES})
