@@ -1,30 +1,68 @@
-\documentclass[11pt]{article}
-
-\usepackage{fullpage}
-
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[british=nohyphenation]{hyphsubst}
+\usepackage[british]{babel}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=apa]{biblatex}
+\usepackage[pdftex]{graphicx}
+\usepackage{titling}
+\usepackage{geometry}
+\geometry{legalpaper, portrait, margin=1in}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+\setlength{\droptitle}{-5em}
 \begin{document}
 
-\title{ARM Checkpoint... }
-\author{TODO}
-
+\title{ C Project Checkpoint }
+\author{Group 12: Dheeraj Geetala, Anantachok Duangsarot, \\Amirhossein Khakpour, Alex Justice}
+\predate{}
+\date{}
+\postdate{}
 \maketitle
 
-\section{Group Organisation}
+\section{Work Allocation \& Coordination}
+We originally decided to spend a few days getting to grips with the C programming language before starting the project, however after meeting with our supervisor who stressed the importance of learning whilst doing the project we decided to start on the project. After seeing that the key tasks in the emulator were the binary file loader, instructions, pipeline and behind-the-scenes functions we split these tasks between the group members.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+I, Dheeraj, made a header file title "definitions.h" which we are all using as a base to create other parts of the emulator. The file includes enums and structs, amongst other useful things, describing the state of the processor. In addition I worked on the multiply instruction and on code extraction (i.e. extracting various parts of an instruction such as the condition or opcode for later use). The aforementioned definitions file was also edited as necessary by the other members of the group. 
 
-\section{Implementation Strategies}
+Anantachok was delegated the task of writing all of the code for most complex instruction, the Data Processing Instruction and as such spent most of his time on the that instruction. This included writing the shifter which he then also edited to be used for the single data transfer instruction.
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+Amir was delegated the Binary file loader, decoding the instructions as well as the branch and single data processing instruction. In addition to these he also coded the basic emulate functionality drawing from and adding to "definitions.h".
+
+Alex worked mainly on the conceptual side of the task, being the one who first understand what was required and then conveyed this to the rest of us. In addition to this, he coded the emulate 
+
+We arranged to meet for 1-2 hours every Tuesday and Friday where we would assess what we had each done upto the meeting and would then need to be done after it. On these days we would usually work all day in labs. Additionally, we each had different branches which we would merge together after the respective tasks had been completed. We found that this enabled us to work efficiently even if we weren't all physically together.
+
+\section{Group Performance}
+
+A discussion on how well you think the group is working and how you imagine it might need to
+change for the later tasks.
+
+In my opinion the group has been working hard and are definitely willing to put in the extra mile if and when it's required. However I've notice that on days that we're not all working together the productivity does start to slip. In order to address I think we will make sure that we come in to labs and work together at least 3 times a week which would increase if we find ourselves behind schedule.
+
+\section{Emulator Structure}
+
+How you’ve structured your emulator, and what bits you think you will be able to reuse for the
+assembler.
+
+
+
+The structure of the emulator consists of the emulate.c file and files for it's dependencies. At its core, the emulators simulates the memory and registries of a virtual machine, by maintaining a struct called state. This struct when initialised, contained a pointer to a 65 kilobyte array to simulate the byte-addressable memory, a smaller array to simulate most general purpose registers, and additional structs that allowed for easy manipulation of instructions, data, and select CPSR flags. Once this struct was initialised, a pointer to it is passed to the loader, which populates the memory with the object code.
+
+Once the simulated memory is populated, emulate loops over the instructions, identifying them, updating state to prepare for the instruction execution, and then executing the instruction. One point of difference in the emulator, is that in it's current implementation, it does not fetch the instruction by loading it into an Instruction register, instead, we effectively decode the instruction directly from the memory array (if it is not 0x00000000 whereupon it would terminate).
+
+We believe that part of the file loader may be useful and the functions that we used to manage the virtual memory are also likely to prove useful. A lot of the definitions from the definitions.h file can be reused as we can use them to check that binary code to be output matches the rules of the instructions.
+
+\section{Implementation Tasks}
+
+A discussion on implementation tasks that you think you will find difficult / challenging later on,
+and how you are working to mitigate these.
+
+In the upcoming assembler part, a difficulty to overcome will be in identifying and storing data such as global variables, and even labels. We believe that this would be best mitigated by extensive parsing of the input file.
+The nature of the processor being little Endian whilst the computer we are running it on and the spec is big Endian. This caused a lot of confusion for team members during the emulator and we anticipate a little more during assembler. However we foresee that we will easily be able to transfer some of the functions and structures regarding memory management and endianess in the emulator to the assembler.
+
+\section{Conclusion}
+
+To conclude I would say that I have been generally happy with the my teams work ethic and the code produced. We believe that we have improved our C skills considerably throughout this task and I hope that this will stand us in a good stage to kick on and finish the second task to a good standard. Something we need to improve on is better communication so that we reduce the amount of redundant code which we found we produced because we mainly worked individually. As we still hadn't got into the hang off getting the latest definitions.h file we found that a lot of functions were repeated amongst members which led to a fair bit of time wasted on trying to merge the different codebases.
 
 \end{document}

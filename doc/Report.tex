@@ -1,21 +1,117 @@
-\documentclass[11pt]{article}
-
-\usepackage{fullpage}
-
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[british=nohyphenation]{hyphsubst}
+\usepackage[british]{babel}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=apa]{biblatex}
+\usepackage[pdftex]{graphicx}
+\usepackage{titling}
+\usepackage{geometry}
+\usepackage{amsmath}
+\geometry{legalpaper, portrait, margin=1in}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{1em}
+\setlength{\droptitle}{-5em}
 \begin{document}
 
-\title{Our Extension...}
-\author{TODO}
-
+\title{ C Project Report }
+\author{Group 12: Dheeraj Geetala, Anantachok Duangsarot, \\Amirhossein Khakpour, Alex Justice}
+\predate{}
+\date{}
+\postdate{}
 \maketitle
 
-\section{Introduction}
+\section{Structure and Implementation of Assembler}
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor
-incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
-fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-culpa qui officia deserunt mollit anim id est laborum.
+For the assembler we decided to take the recommendation from the spec and write a two-pass assembler. The first pass creates a symbol table for associating labels with memory addresses and the second pass reads the opcode mnemonic and operand field(s) for each instruction, replacing label references in operand fields with their corresponding addresses and finally generates the corresponding binary instruction.
+
+To aid in this we divided the task into three main processes
+\begin{itemize}
+\item Loading and tokenising instruction from a given file
+\item Translating an instruction to a word 
+\item Writing all binary words into a target file.
+\end{itemize}
+
+The loader calculated the number of lines in the file and then made an appropriate string buffer. Fread was then used to read the whole file as one string. In the run function we made a two dimensional string array by separating lines using $strtok_r$. After that, two loops were made:
+\begin{itemize}
+\item[First:] locate labels and putting their address into a symbol table
+\item[Second:] read every instruction, excluding the labels, tokenize it into a struct containing the required information and then passing it to one of the five instruction types shown below. 
+\end{itemize}
+
+
+Instruction Types
+\begin{itemize}
+\item Data Processing
+\item Multiply
+\item Single Data Transfer
+\item Branch
+\item Special Instruction
+\end{itemize}
+
+We decided to make use of structs in a very similar way as we did for the emulator. The reasoning was that we found it to provide a solution that was both robust whilst still being elegant. The struct contains a pointer to chars which represent the mnemonic and shiftname respectively and unsigned 32 bit integers for the registers rd, rn, rs and rm as well operand2 and Imm.
+
+Each instruction type then uses the information from the struct to interpret each instruction as a 32 bit binary number. In this step, a shift-left($<<$) is used to shift each field to its starting position, then all of the fields are combined to obtain the 32 bit word by logical "OR". Then the assembler flips the endianness of the word to store the instruction as a 32 bit number. Finally, our program writes all binary instructions and their corresponding
+memory address to an output file.  
+
+\section{Extension}
+
+\subsection{Context}
+After our first meeting and discussion with our group supervisor we decided to have two different paths for the extension. The path chosen would depend on how much time we had for the extension after completing the emulator and assembler. We consequently brainstormed many ideas and narrowed them down to get one for each time-scale. Our more ambitious plan was to remake the highly popular game "2048" with a GUI. The LED's would flash at important parts of the game i.e. one flash for "128", two for "256", three for "512" and so on. This however proved to be too ambitious a plan given the way our project's time-line went. 
+
+We decided that due to the complexity of the various items that needed implementing, a time-scale of a week would be sufficient. An oversight of not factoring in time for revision for the C exam meant that we actually only had a single day to do the extension, so we went with our other plan.
+
+\subsection{Brief Description}
+The extension we chose to work on consisted of a binary counter, built using LEDs and a pair of push buttons and running a binary file which we assembled using our assembler. We decided on this as it was a relatively straightforward project whilst also giving us lots of scope to expand i.e. make it an adder, a multiplier, a divisor, a subtractor or even all of them.
+
+The pins to which the LED are connected, are configured as outputs, and the entire bank of pins is set as inputs at set-up. The looping section of the assembly code monitors the address 0x20200034 for a specific pair of inputs and either increments or decrements a counter. The LEDs are then powered in a combination that represents the last three bits of the counter.
+
+\subsection{Design Details and Challenges Overcome}
+
+Due to the very simple nature of the project not many challenges were encountered. The ones that we did have, were mainly centred on the basic functionality of LED flashing and button implementation. Once we overcame these struggles it was a relatively straightforward finish to the extension.
+
+We discovered that our initial problem with LED flashing was caused by a faulty adapter. The supervisor kindly replaced it but unfortunately we still had other errors which needed rectifying. Identifying the source of the errors was surprisingly challenging; despite the assembler passing most of the tests, it didn't pass the optional ones, which meant that the problem could not be isolated to "gpio.s" alone.
+
+When attempted to extend the functionality of the extension, we discovered that there were issues with the proximity of various buttons. Logically this should have been simply fixed by spreading out the buttons. Strangely this caused us further errors which we contributed to a mistake in copying "kernel.img". However, this set us back several hours and unable to include all of the desired add-ons to the extension.
+
+\subsection{Testing Strategy}
+
+Testing our extension was relatively straightforward compared with the majority of the other extensions in the year. For each part of the project (counter, adder, multiplier etc.) we adopted a similar plan to test it. In its generality our tests were designed to check for normal functionality, extraneous data and data overload to see the effects on the system.
+
+For example for the counter there are only a limited number of potential "normal case" tests. With the assumption that each button press could be treated completely independently this would include counting up from 0 to 15 and counting down from 1 to 16. This would leave the edge cases of counting down from 0 which should leave 0 and counting up from 16 which should leave 16. It's a very short set of tests and so we were confident that we could test and perfect this quickly. We found that this actually wasn't the case as repeated rapid presses on either or both buttons would not cause the desired visible changes. We discovered that this was essentially due to the way we implemented the loading up the LED's to take a few seconds as instructed in part III. Realistically no amount of warnings and advice to the user regarding correct usage would prevent the aforementioned human errors. The technical part of the solution was much simpler and just consisted of reducing the time between the press of the button and the LED to light up.
+
+As was mentioned previously, there was a finite number of test cases for the adder and multiplier. Admittedly there were too many cases to make testing of each one a good use of our time so we merely tested for a few normal cases and spent the majority of our time on edge cases. These edge cases include such things as overflow and underflow.
+
+\section{Group Reflection}
+
+The communication between the group was admittedly a real problem and hampered us greatly all the way throughout the project. We set up a facebook chat which we agreed would be our focal point for communication. As a precaution we also exchanged phone numbers with the intention that all of us would be contactable at any moment. This however didn't really happen as desired and combined with general tardiness and the group's poor time management meant our meetings started much later and were much less frequent then we envisioned and planned at the start of the project. 
+
+Less than satisfactory communication and time management meant that we fell behind quite quickly. Our first internal deadline was the emulator for Friday 27th May for which we only just managed compilation and a handful of tests passing. I decided that it would be best if one person single-handedly fixed the emulator while the rest of the team worked on the assembler so we would make our second deadline of Friday 3rd June. This was also missed and by a big margin which meant we had far less time to do the extension than envisioned.
+
+Consequently this is something that we all agree we would do vastly different for another group project. A very strict culture of always being available to contact for information regarding the project and clear documentation, code and group communication would have all helped enormously in this task and it is something that we need to strive for next time.
+
+On the plus side, the work allocation was originally very good with all of us working on the emulator. This had to change due to the aforementioned deadline we missed. Following this, the work allocation was a little less even but was still certainly fair and is something that we would keep to similar level for the next project.
+
+\section{Individual Reflections}
+
+\begin{itemize}
+
+\item[\textbf{Amir}]
+I think I learned a lot on how to communicate, design and think to prepare for a big projects. I have enjoyed working in this group and feel that this was a stepping stone for me to take bigger projects. I did branch, single data transfer, decoding and printing functions for emulator, for assembler except multiply, special and data processing functions ,which was done by anantoachok, I designed, wrote and debug the whole of this part. I think, the whole group including me, need to work more on designing functions and planning the task. These important facts showed itself a lot where we didn't have a unique design and we didn't stick on original purpose and definitions of some the functions and frequent changes on their signature and return type, caused a lot of confusion. However, I tried to avoid that for assembler which made debugging significantly easier.
+
+\item[\textbf{Anant}]
+Overall I felt happy to work in the group, my team-mate are hard-working and very kind. I have learnt a lots from them. But we also have many things to improve, timing is the first thing to be concerned about. We should try to get everything completed by the expected times. We need to make sure that every member works following the design of the group to save time of converting format of the codes and talk to each other more frequently to avoid making redundant codes. I need to improve the speed of working because I did a bit slow work. I also think I should talk to the others more in next group project. The good things that I thing we can maintain to work in group are being hard-working and willing to do works.
+
+\item[\textbf{Alex}]
+Initially, I had anticipated a challenge, yet was confident I could be a beneficial part of the group. I believed I would be comfortable with the language and would fit in. However, as the project progressed, it quickly became clear that I was the least able programmer, and while I may have helped with certain select problems, I failed to contribute to a reasonable degree.
+Coming out of this project, I have learnt a few things, and if I were to have the opportunity to work in a group again, i would endeavour to separate my personal issues from my responsibilities in the group, and strive for better communication with each member.
+
+\item[\textbf{Dheeraj}]
+I was the one who formed the group initially as it gave me an opportunity to work with some people who I'd not worked with in the past and whom I would not normally spend a lot of time with. My rationale was that as this years group projects are worth the least (in relation to later year group projects which are worth a greater percentage of the year) it would be logical to work with as many different people as I could. I was the team leader for the Topics Project and while I felt I did my job to a satisfactory standard it was not something that I wanted to do again. Unfortunately, no one in my group was willing to take the role so I again stepped forward and took it. I'm quite a vocal and arguably brash team leader and have always maintained a mixture of persuasive and consultative styles of management. This style had always served me well in the past but in this project I must admit that it did not work as I imagined. I believe that's mainly due to the differences in nature between my group and I; they are much less vocal and therefore they didn't provide as much input as I needed to make the best decisions for the betterment of the group. 
+
+Moving on from the management and team leader part I felt that as a programmer I fit in quite well with the group as there was certainly no chasm in ability between the members. However we all seemed suited to do the same tasks which meant we all wanted to code the same parts of the project and resulted in redundant code.
+
+For my next group project I'd like to not be team leader just so I can actually focus on design and programming rather than ensuring that everyone does what they needed to at any moment. I'd additionally push for everyone to be very contactable and be very flexible yet punctual for designated meetings.  
+
+\end{itemize}
 
 \end{document}
