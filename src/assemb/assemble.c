@@ -1,5 +1,9 @@
 #include <stdlib.h>
+#include "run.c"
 
 int main(int argc, char **argv) {
-  return EXIT_SUCCESS;
+ 
+  run(argc, argv);
+
+  return 0;
 }
