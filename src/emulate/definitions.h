@@ -63,6 +63,8 @@
 #define SHIFT_T_END 7
 #define SHIFT_AMOUNT_START 7
 #define SHIFT_AMOUNT_END 12
+#define OPT_SHIFT_AMOUNT_START 8
+#define OPT_SHIFT_AMOUNT_END 12
 
 /* masks & shifts*/
 #define MAX_MASK 0xFFFFFFFF

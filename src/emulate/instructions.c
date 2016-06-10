@@ -206,7 +206,6 @@ void setCadd(state *st, uint32_t first_value, uint32_t second_value) {
 /* helper function which sets C flag when appropriate
  * called for SUB, CMP and RSB */
 void setCsub(state *st, uint32_t first_value, uint32_t second_value) {
-//    TODO: do by adding second operand as 2's complement
     st->cpsrFlag->cbit = 0;
     if (second_value >= first_value) {
         st->cpsrFlag->cbit = 1;
@@ -249,7 +248,6 @@ shift_out shift(state *st) {
     uint32_t shiftAmount = extract(instr, SHIFT_AMOUNT_START, SHIFT_AMOUNT_END);
     uint32_t rm = extract(instr, RM_START, RM_END);
     uint32_t shiftType = extract(instr, SHIFT_T_START, SHIFT_T_END);
-
     if (!extract(instr, OP_REG_BIT, OP_REG_BIT + 1)) {
         int signBit = extract(instr, MS_BIT, MS_BIT + 1);
         uint32_t rightBits;
@@ -278,14 +276,19 @@ shift_out shift(state *st) {
                 carryBit = shiftAmount - 1;
                 break;
             default:
+                printf("default\n");
                 fprintf(stderr,"missed all shift type cases");
         }
         if (shiftAmount == 0) {
             carryBit = 0;
         }
-        shiftOut.data = offset;
-        shiftOut.carry = carryBit;
+    } else {
+        int reg_address = extract(instr, OPT_SHIFT_AMOUNT_START, OPT_SHIFT_AMOUNT_END);
+        shiftAmount = st->reg[reg_address];
+        offset = st->reg[rm] >> shiftAmount;
     }
+    shiftOut.data = offset;
+    shiftOut.carry = carryBit;
     return shiftOut;
 }
 
