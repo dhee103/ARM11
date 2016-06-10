@@ -3,8 +3,6 @@
 
 #include <stdint.h>
 
-#define MAX_CHARS 511
-
 #define U 1 << 23
 #define PIPELINE_EFFECT 8
 #define Cond 14
