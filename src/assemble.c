@@ -1,5 +1,4 @@
-#include <stdlib.h>
-#include "run.c"
+#include "run.h"
 
 int main(int argc, char **argv) {
  

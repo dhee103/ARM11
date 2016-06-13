@@ -15,7 +15,7 @@ loop:
 ;clear GPIO 16
 str r1,[r0,#40]
 
-mov r2,#0xF0000
+mov r2,#0xF00000
 delay:
 sub r2,r2,#1
 cmp r2,#0
@@ -24,7 +24,7 @@ bne delay
 ;set GPIO 16
 str r1,[r0,#28]
 
-mov r2,#0xF0000
+mov r2,#0xF00000
 delay2:
 sub r2,r2,#1
 cmp r2,#0

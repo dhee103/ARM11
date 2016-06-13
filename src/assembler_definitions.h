@@ -17,6 +17,7 @@
 #define Bits16  16
 #define Bits25  25
 #define FIVE 5
+#define shifterRegSign 1 << 4
 #define condMask_DP 28
 #define IMask_DP 25
 #define opcodeMask_DP 21
@@ -36,29 +37,29 @@
 
 enum {
 
-  eq = 0,
-  ne = 1,
-  ge = 10,
-  lt = 11,
-  gt = 12,
-  le = 13,
-  al = 14,
+    eq = 0,
+    ne = 1,
+    ge = 10,
+    lt = 11,
+    gt = 12,
+    le = 13,
+    al = 14,
 
 };
 
 typedef struct instruction {
 
-  char *mnemonic;
-  uint32_t operand2;
-  uint32_t rd; 
-  uint32_t rn; 
-  uint32_t rs;
-  uint32_t rm;
-  uint32_t imm;
-  uint32_t expression;
-  uint32_t lastAdd;
-  uint32_t p;
-  uint32_t u;
+    char *mnemonic;
+    uint32_t operand2;
+    uint32_t rd;
+    uint32_t rn;
+    uint32_t rs;
+    uint32_t rm;
+    uint32_t imm;
+    uint32_t expression;
+    uint32_t lastAdd;
+    uint32_t p;
+    uint32_t u;
 
 } instruct;
 
@@ -75,5 +76,4 @@ typedef enum {
     MOV = 13
 } OPCODE;
 
-
-#endif 
+#endif

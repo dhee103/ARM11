@@ -93,16 +93,16 @@ typedef enum {
 
 /*Enum named OPCODE Data Processing instructions */
 typedef enum {
-    AND = 0,
-    EOR = 1,
-    SUB = 2,
-    RSB = 3,
-    ADD = 4,
-    TST = 8,
-    TEQ = 9,
-    CMP = 10,
-    ORR = 12,
-    MOV = 13
+	AND = 0,
+	EOR = 1,
+	SUB = 2,
+	RSB = 3,
+	ADD = 4,
+	TST = 8,
+	TEQ = 9,
+	CMP = 10,
+	ORR = 12,
+	MOV = 13
 } OPCODE;
 
 /* Enum named SHIFT for shift type */
@@ -115,11 +115,11 @@ typedef enum {
 
 /* Enum named GPIO for the different cases for GPIO pins */
 typedef enum {
-    PIN_OFF = 0x20200028,
-    PIN_ON = 0x2020001C,
-    PIN_0_9 = 0x20200000,
-    PIN_10_19 = 0x20200004,
-    PIN_20_29 = 0x20200008,
+	PIN_OFF = 0x20200028,
+	PIN_ON = 0x2020001C,
+	PIN_0_9 = 0x20200000,
+	PIN_10_19 = 0x20200004,
+	PIN_20_29 = 0x20200008,
 } GPIO;
 
 /* information held by the decoded instruction */
@@ -136,7 +136,7 @@ typedef struct decoded_instruction {
 	uint32_t rs;
 	uint32_t rm;
 	uint32_t offset;
-    uint32_t operand2;
+	uint32_t operand2;
 } decoded_instr;
 
 /* struct for cpsr flag */
@@ -154,7 +154,7 @@ typedef struct state {
 	decoded_instr *decoded;
 	uint32_t *reg;
 	uint8_t *memory;
-    cpsr *cpsrFlag;
+	cpsr *cpsrFlag;
 } state;
 
 /* struct for the output from a shifter

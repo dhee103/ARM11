@@ -1,28 +1,6 @@
-#include"definitions.h"
-#include"ST.c"
-#include"single_data_process.c"
-#include"branch.c"
-#include"multiply.c"
-#include"special.c"
-
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-#include<assert.h>
-#include<stdint.h>
-
-void printInd(instruct *ins) {
-
-  printf("Instruction = %s\n", ins -> mnemonic);
-  printf("operand2 = %d\n", ins -> operand2);
-  printf("rd = %d\n", ins -> rd);
-  printf("rs = %d\n", ins -> rs);
-  printf("rm = %d\n", ins -> rm);
-  printf("rn = %d\n", ins -> rn);
-  printf("imm = %d\n", ins -> imm);
-  printf("expression = %d\n\n", ins -> expression);
-
-}
+#include "run.h"
+#include "assembler_instructions.h"
+#include <assert.h>
 
 char** twoD(int rows, int cols) {
 
@@ -36,16 +14,13 @@ char** twoD(int rows, int cols) {
   }
 
   return res;
-
 }
 
 char* loader(int argc, char **args, int *no_lines) {
-
   if (argc == 1) {
     perror("The name is missing.");
     exit(EXIT_FAILURE);
   }
-
   FILE *f;
   f = fopen(args[1], "r");
 
@@ -53,10 +28,8 @@ char* loader(int argc, char **args, int *no_lines) {
     perror("File does not exist.");
     exit(EXIT_FAILURE);
   }
-
   int num = 0;
   int numSpace = 1;    
-
   while(!feof(f)) {
     if (getc(f) == '\n' && numSpace == 0) {
       num++;
@@ -81,31 +54,10 @@ char* loader(int argc, char **args, int *no_lines) {
 
 }
 
-void print_bits(uint32_t num) {
-
-  int i;
-  uint32_t mask = 1 << 31;
-  for (i = 0; i < 32; i++) {
-    printf("%d", (mask & num) != 0);
-    num <<= 1;
-  }  
-  printf("\n");
-
-}
-
 void freeStrArr(char* arr) {
 
   assert(arr != NULL);
   free(arr);
-
-}
-
-uint32_t reverse(uint32_t num) {
-
-  return num >> 24 
-       | ((num & 0xff0000) >> 8)
-       | ((num & 0xff00) << 8)
-       | num << 24;
 
 }
 
@@ -117,13 +69,29 @@ void freeInst(instruct *ins) {
 
 }
 
+uint32_t shiftType(char *type) {
+
+  uint32_t shift = 3;
+
+  if (strcmp(type, "lsl") == 0) {
+    shift = 0;
+  } else if (strcmp(type, "lsr") == 0) {
+    shift = 1;
+  } else if (strcmp(type, "asr") == 0) {
+    shift = 2;
+  }
+
+  return shift;
+
+}
+
 void handle_operand(char* operand2, instruct *ins) {
 
   char *eptr;
   char *save;
 
   if (operand2[0] == 'r') {
-    ins -> operand2 = atoi(strtok_r(operand2, "r", &save));
+    ins -> operand2 = atoi(strtok_r(operand2, "-r", &save));
     ins -> imm = 0;    
   } else if (strstr(operand2, "x") != NULL) {
     ins -> operand2 = strtol(operand2, &eptr, 16);
@@ -155,13 +123,17 @@ uint32_t handleReg(char *token) {
 
 void handleAddress(instruct *ins, char *token) {
 
-  char *str[2], *save;
+  char *str[4], *save;
   str[0] = strtok_r(token, "]", &save);
-  str[1] = strtok_r(NULL, "], #", &save);  
+  str[1] = strtok_r(NULL, "], #", &save);
+  str[2] = strtok_r(NULL, "], #", &save);
+  str[3] = strtok_r(NULL, "], #", &save);  
   if (str[1] == NULL) {
     ins -> p = 1;
     str[0] = strtok_r(str[0], ", #", &save);
     str[1] = strtok_r(NULL, ", #", &save);
+    str[2] = strtok_r(NULL, "], #", &save);
+    str[3] = strtok_r(NULL, "], #", &save);
   } else {
     ins -> p = 0;    
   }
@@ -169,6 +141,15 @@ void handleAddress(instruct *ins, char *token) {
   ins -> rn = handleReg(str[0]);
   if (str[1] != NULL) {
     handle_operand(str[1], ins);
+    if (str[2] != NULL) {
+      ins -> rm = ins -> operand2;
+      if (str[1][0] == '-') {
+        ins -> u = 0;
+      }
+      handle_operand(str[3], ins);
+      ins -> imm = 0;
+      ins -> operand2 = (ins -> operand2 << 7) | (shiftType(str[2]) << 5) | (ins -> rm);
+    }
   }
 
 }
@@ -193,6 +174,20 @@ void setInstruction(instruct *ins, char line[511], uint32_t *res,
               ins -> rn = handleReg(token);;
               token = strtok_r(NULL, " ,#\n", &save);
               handle_operand(token, ins);
+              token = strtok_r(NULL, " ,#\n", &save);
+              if (token != NULL) {      
+                ins -> rm = ins -> operand2;
+                ins -> rs = shiftType(token);
+                token = strtok_r(NULL, " ,#\n", &save);
+                handle_operand(token, ins);
+                if (ins -> imm == 0) {
+                  printf("rm : %d, type: %d, ins -> operand: %d\n", ins -> rm, ins -> rs, ins -> operand2);
+                  ins -> operand2 = (ins -> operand2 << 8) | (ins -> rs << 5) | (shifterRegSign) | (ins -> rm);  
+                } else {
+                  ins -> operand2 = (ins -> operand2 << 7) | (ins -> rs << 5) | (ins -> rm);   
+                }               
+                ins -> imm = 0;
+              }
               res[currAdd] = assembler_dataProcessing(ins);
               break;
     case 'm': if (token[1] == 'u' || token[1] == 'l') {
@@ -213,6 +208,20 @@ void setInstruction(instruct *ins, char line[511], uint32_t *res,
                 ins -> rd = handleReg(token);;
                 token = strtok_r(NULL, " ,#\n", &save);
                 handle_operand(token, ins);
+                token = strtok_r(NULL, " ,#\n", &save);
+                if (token != NULL) {      
+                  ins -> rm = ins -> operand2;
+                  ins -> rs = shiftType(token);
+                  token = strtok_r(NULL, " ,#\n", &save);
+                  handle_operand(token, ins);
+                  if (ins -> imm == 0) {
+                    printf("rm : %d, type: %d, ins -> operand: %d\n", ins -> rm, ins -> rs, ins -> operand2);
+                    ins -> operand2 = (ins -> operand2 << 8) | (ins -> rs << 5) | (shifterRegSign) | (ins -> rm);  
+                  } else {
+                    ins -> operand2 = (ins -> operand2 << 7) | (ins -> rs << 5) | (ins -> rm);   
+                  }               
+                  ins -> imm = 0;
+                }
                 res[currAdd] = assembler_dataProcessing(ins);
               }
               break;
@@ -230,6 +239,20 @@ void setInstruction(instruct *ins, char line[511], uint32_t *res,
                 ins -> rn = handleReg(token);
                 token = strtok_r(NULL, " ,#\n", &save);
                 handle_operand(token, ins);
+                token = strtok_r(NULL, " ,#\n", &save);
+                if (token != NULL) {      
+                  ins -> rm = ins -> operand2;
+                  ins -> rs = shiftType(token);
+                  token = strtok_r(NULL, " ,#\n", &save);
+                  handle_operand(token, ins);
+                  if (ins -> imm == 0) {
+                    printf("rm : %d, type: %d, ins -> operand: %d\n", ins -> rm, ins -> rs, ins -> operand2);
+                    ins -> operand2 = (ins -> operand2 << 8) | (ins -> rs << 5) | (shifterRegSign) | (ins -> rm);  
+                  } else {
+                    ins -> operand2 = (ins -> operand2 << 7) | (ins -> rs << 5) | (ins -> rm);   
+                  }               
+                  ins -> imm = 0;
+                }
                 res[currAdd] = assembler_dataProcessing(ins);
                 break;  
               } 
@@ -341,14 +364,38 @@ void run(int argc, char **args) {
 
   for (i = 0; i < no_lines; i++) {
     if (strstr(array[i], ":") == NULL) {
-    //   printf("%s %d\n", array[i], currAddress);
        setInstruction(ins, array[i], res, currAddress, symboltable);
        currAddress++;
-    //   printInd(ins);
-    } 
+    }
   }
 
  printRes(args[2], res, ins -> lastAdd);
 
+
+}
+
+uint32_t getAddress(ST *symbolTable, char *label) {
+
+    SYM *sym = symbolTable -> last;
+
+    while (sym != NULL) {
+        if (strcmp(sym -> label, label) == 0) {
+            return sym -> address;
+        }
+        sym = sym -> next;
+    }
+
+    perror("label not found.");
+    exit(EXIT_FAILURE);
+
+}
+
+void add_Symbol(uint32_t address, char *label, ST *symbolTable) {
+
+    SYM *sym = malloc(sizeof(SYM));
+    sym -> label = label;
+    sym -> address = address;
+    sym -> next = symbolTable -> last;
+    symbolTable -> last = sym;
 
 }
