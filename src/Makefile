@@ -30,3 +30,4 @@ assembler_instructions.o: assembler_instructions.h
 clean:
 	rm -f $(wildcard *.o)
 	rm -f emulate
+	rm -f assemble
